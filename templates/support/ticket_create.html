@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Novo Ticket{% endblock %}
+{% block content %}
+<h4 class="page-title"><i class="bi bi-plus-circle me-2"></i>Criar Novo Ticket</h4>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Assunto</label>
+                        <input type="text" id="subject" name="subject" maxlength="200" required
+                               class="form-control" placeholder="Breve descrição do problema">
+                        <div class="invalid-feedback">Informe o assunto do ticket.</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="category" class="form-label">Categoria</label>
+                            <select id="category" name="category" class="form-select">
+                                <option value="">-- Selecione --</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.pk }}">{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="priority" class="form-label">Prioridade</label>
+                            <select id="priority" name="priority" class="form-select">
+                                <option value="low">Baixa</option>
+                                <option value="medium" selected>Média</option>
+                                <option value="high">Alta</option>
+                                <option value="urgent">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Descrição</label>
+                        <textarea id="description" name="description" required
+                                  class="form-control" rows="5" placeholder="Descreva detalhadamente o problema..."></textarea>
+                        <div class="invalid-feedback">Descreva o problema.</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send"></i> Enviar Ticket
+                        </button>
+                        <a href="{% url 'support:ticket_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

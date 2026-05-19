@@ -1,0 +1,352 @@
+{
+    "project": {
+      "name": "Plataforma Web ENDE - Gestão de Atendimento e Pagamentos",
+      "description": "Implementação de plataforma web integrada para clientes pré-pago e pós-pago da ENDE-EP, Angola",
+      "technologies": ["Django", "Bootstrap 5", "PostgreSQL", "Python 3.x"],
+      "target_users": ["Clientes Pré-pago", "Clientes Pós-pago", "Operadores de Atendimento", "Administradores"]
+    },
+    "action_plan": {
+      "phase_01_preparacao": {
+        "name": "Preparação e Configuração do Ambiente",
+        "order": 1,
+        "duration_estimate": "1-2 semanas",
+        "tasks": [
+          {
+            "id": "P1-T1",
+            "name": "Configurar ambiente de desenvolvimento",
+            "description": "Instalar Python 3.x, pip, virtualenv, PostgreSQL, pgAdmin, Git e VS Code/PyCharm",
+            "commands": [
+              "python -m venv venv",
+              "source venv/bin/activate",
+              "pip install django psycopg2-binary python-dotenv"
+            ],
+            "deliverable": "Ambiente virtual Python configurado com dependências básicas",
+            "priority": "critical"
+          },
+          {
+            "id": "P1-T2",
+            "name": "Inicializar repositório Git e estrutura do projeto Django",
+            "description": "Criar projeto Django com apps modulares: users, customers, billing, payments, support",
+            "commands": [
+              "django-admin startproject ende_platform .",
+              "python manage.py startapp users",
+              "python manage.py startapp customers",
+              "python manage.py startapp billing",
+              "python manage.py startapp payments",
+              "python manage.py startapp support"
+            ],
+            "deliverable": "Estrutura de pastas do projeto Django organizada",
+            "priority": "critical"
+          },
+          {
+            "id": "P1-T3",
+            "name": "Configurar banco de dados PostgreSQL",
+            "description": "Criar database, usuário e configurar settings.py com conexão segura",
+            "commands": [
+              "CREATE DATABASE ende_db;",
+              "CREATE USER ende_user WITH PASSWORD 'secure_password';",
+              "GRANT ALL PRIVILEGES ON DATABASE ende_db TO ende_user;"
+            ],
+            "deliverable": "Conexão Django-PostgreSQL funcional via ORM",
+            "priority": "critical"
+          },
+          {
+            "id": "P1-T4",
+            "name": "Configurar variáveis de ambiente e segurança inicial",
+            "description": "Implementar .env para SECRET_KEY, DEBUG, DB credentials e configurar ALLOWED_HOSTS",
+            "deliverable": "Arquivo .env.example e settings.py seguro com python-decouple",
+            "priority": "high"
+          }
+        ],
+        "dependencies": [],
+        "success_criteria": [
+          "Projeto Django inicia sem erros com 'python manage.py runserver'",
+          "Migrações iniciais aplicadas com sucesso",
+          "Conexão com PostgreSQL validada"
+        ]
+      },
+      "phase_02_modelagem_dados": {
+        "name": "Modelagem de Dados e ORM",
+        "order": 2,
+        "duration_estimate": "2-3 semanas",
+        "tasks": [
+          {
+            "id": "P2-T1",
+            "name": "Definir modelos de usuários e autenticação",
+            "description": "Customizar User model com perfis: cliente, operador, administrador",
+            "code_snippet": "class CustomUser(AbstractUser): user_type = models.CharField(choices=[('client','Client'),('operator','Operator'),('admin','Admin')])",
+            "deliverable": "Sistema de autenticação com RBAC básico implementado",
+            "priority": "critical"
+          },
+          {
+            "id": "P2-T2",
+            "name": "Modelar entidade Cliente (pré e pós-pago)",
+            "description": "Criar modelo Customer com campos: customer_type, meter_number, balance, debt, contact_info",
+            "code_snippet": "class Customer(models.Model): customer_type = models.CharField(choices=[('prepaid','Prepaid'),('postpaid','Postpaid')]); current_balance = models.DecimalField(...); meter_number = models.CharField(unique=True)",
+            "deliverable": "Modelo Customer com relacionamentos e validações",
+            "priority": "critical"
+          },
+          {
+            "id": "P2-T3",
+            "name": "Modelar faturas e transações",
+            "description": "Criar modelos Invoice e Transaction com status, valores, datas e histórico",
+            "deliverable": "Sistema de faturação com estados: draft, issued, paid, overdue, partially_paid",
+            "priority": "critical"
+          },
+          {
+            "id": "P2-T4",
+            "name": "Modelar módulo de atendimento",
+            "description": "Criar modelos Ticket, Message, Category para registro e acompanhamento de ocorrências",
+            "deliverable": "Sistema de tickets com status tracking e histórico de interações",
+            "priority": "high"
+          },
+          {
+            "id": "P2-T5",
+            "name": "Aplicar migrações e criar superuser",
+            "description": "Gerar e aplicar migrations, criar usuário administrador para testes",
+            "commands": [
+              "python manage.py makemigrations",
+              "python manage.py migrate",
+              "python manage.py createsuperuser"
+            ],
+            "deliverable": "Banco de dados populado com estrutura completa",
+            "priority": "critical"
+          }
+        ],
+        "dependencies": ["phase_01_preparacao"],
+        "success_criteria": [
+          "Todos os models registrados no admin do Django",
+          "Relacionamentos entre entidades validados",
+          "Consultas ORM básicas funcionando"
+        ]
+      },
+      "phase_03_backend_logica": {
+        "name": "Desenvolvimento do Backend - Lógica de Negócio",
+        "order": 3,
+        "duration_estimate": "3-4 semanas",
+        "tasks": [
+          {
+            "id": "P3-T1",
+            "name": "Implementar views para clientes pré-pago",
+            "description": "Criar views para: consulta de saldo, solicitação de recarga, histórico de transações",
+            "deliverable": "Views funcionais com templates para fluxo pré-pago",
+            "priority": "critical"
+          },
+          {
+            "id": "P3-T2",
+            "name": "Implementar views para clientes pós-pago",
+            "description": "Criar views para: consulta de faturas, registro de pagamento, histórico de consumo",
+            "deliverable": "Views funcionais com templates para fluxo pós-pago",
+            "priority": "critical"
+          },
+          {
+            "id": "P3-T3",
+            "name": "Desenvolver lógica de processamento de pagamentos (simulado)",
+            "description": "Implementar serviço interno para registrar pagamentos, atualizar saldos e gerar comprovativos",
+            "code_snippet": "def process_payment(customer_id, amount, payment_type): # Validar, registrar transação, atualizar saldo, gerar recibo",
+            "deliverable": "Módulo de pagamentos com rastreabilidade e idempotência",
+            "priority": "critical"
+          },
+          {
+            "id": "P3-T4",
+            "name": "Implementar sistema de notificações",
+            "description": "Criar serviço para alertas de faturas a vencer, recargas confirmadas, atualizações de tickets",
+            "deliverable": "Sistema de notificações in-app com marcação de lidas/não lidas",
+            "priority": "medium"
+          },
+          {
+            "id": "P3-T5",
+            "name": "Desenvolver API interna para consultas",
+            "description": "Criar endpoints JSON para consumo futuro por mobile ou integrações externas",
+            "deliverable": "API REST básica com Django REST Framework (opcional para fase acadêmica)",
+            "priority": "low"
+          }
+        ],
+        "dependencies": ["phase_02_modelagem_dados"],
+        "success_criteria": [
+          "Fluxos pré-pago e pós-pago funcionais isoladamente",
+          "Transações registradas com integridade ACID",
+          "Views protegidas por autenticação e permissões"
+        ]
+      },
+      "phase_04_frontend_interface": {
+        "name": "Desenvolvimento do Frontend com Bootstrap 5",
+        "order": 4,
+        "duration_estimate": "2-3 semanas",
+        "tasks": [
+          {
+            "id": "P4-T1",
+            "name": "Configurar templates base e estrutura responsiva",
+            "description": "Criar base.html com navbar, footer, messages e incluir Bootstrap 5 via CDN",
+            "deliverable": "Template base responsivo e reutilizável",
+            "priority": "critical"
+          },
+          {
+            "id": "P4-T2",
+            "name": "Desenvolver páginas de autenticação",
+            "description": "Criar templates para login, registro, recuperação de senha com validação visual",
+            "deliverable": "Fluxo de autenticação completo e acessível",
+            "priority": "critical"
+          },
+          {
+            "id": "P4-T3",
+            "name": "Criar dashboard do cliente",
+            "description": "Desenvolver interface principal com cards de saldo, faturas pendentes, ações rápidas",
+            "deliverable": "Dashboard personalizado por tipo de cliente (pré/pós)",
+            "priority": "critical"
+          },
+          {
+            "id": "P4-T4",
+            "name": "Implementar formulários de interação",
+            "description": "Criar forms para recarga, pagamento, abertura de ticket com validação client-side e server-side",
+            "deliverable": "Formulários seguros com feedback visual e mensagens de erro",
+            "priority": "high"
+          },
+          {
+            "id": "P4-T5",
+            "name": "Adicionar componentes de visualização de dados",
+            "description": "Implementar tabelas, gráficos simples (Chart.js) para histórico de consumo e transações",
+            "deliverable": "Visualizações claras e interpretáveis para o usuário final",
+            "priority": "medium"
+          }
+        ],
+        "dependencies": ["phase_03_backend_logica"],
+        "success_criteria": [
+          "Interface responsiva em mobile, tablet e desktop",
+          "Navegação intuitiva com breadcrumbs e menus contextuais",
+          "Formulários com validação e mensagens de sucesso/erro"
+        ]
+      },
+      "phase_05_seguranca_validacao": {
+        "name": "Segurança, Testes e Validação",
+        "order": 5,
+        "duration_estimate": "2 semanas",
+        "tasks": [
+          {
+            "id": "P5-T1",
+            "name": "Reforçar segurança da aplicação",
+            "description": "Validar CSRF, XSS protection, sanitização de inputs, rate limiting básico",
+            "deliverable": "Relatório de verificações de segurança aplicadas",
+            "priority": "critical"
+          },
+          {
+            "id": "P5-T2",
+            "name": "Implementar testes unitários e de integração",
+            "description": "Criar testes para models, views e fluxos críticos de pagamento",
+            "commands": ["python manage.py test"],
+            "deliverable": "Suite de testes com cobertura mínima de 70% nos módulos críticos",
+            "priority": "high"
+          },
+          {
+            "id": "P5-T3",
+            "name": "Realizar testes de usabilidade com cenários reais",
+            "description": "Simular fluxos completos: cliente pré-pago recarregando, pós-pago pagando fatura, abrindo ticket",
+            "deliverable": "Checklist de testes manuais executados e bugs corrigidos",
+            "priority": "high"
+          },
+          {
+            "id": "P5-T4",
+            "name": "Otimizar performance e consultas",
+            "description": "Aplicar select_related, prefetch_related, índices em campos de busca frequente",
+            "deliverable": "Relatório de otimizações aplicadas e tempos de resposta",
+            "priority": "medium"
+          }
+        ],
+        "dependencies": ["phase_04_frontend_interface"],
+        "success_criteria": [
+          "Nenhuma vulnerabilidade crítica identificada em testes básicos",
+          "Todos os fluxos principais funcionam sem erros",
+          "Tempo de carregamento de páginas < 3s em conexão padrão"
+        ]
+      },
+      "phase_06_implantacao_documentacao": {
+        "name": "Implantação, Documentação e Entrega",
+        "order": 6,
+        "duration_estimate": "1-2 semanas",
+        "tasks": [
+          {
+            "id": "P6-T1",
+            "name": "Preparar ambiente de produção (simulado)",
+            "description": "Configurar DEBUG=False, STATIC_ROOT, ALLOWED_HOSTS, e script de deploy básico",
+            "deliverable": "checklist_deploy.md com passos para produção",
+            "priority": "high"
+          },
+          {
+            "id": "P6-T2",
+            "name": "Gerar documentação técnica do sistema",
+            "description": "Documentar arquitetura, modelos de dados, endpoints, fluxos de negócio",
+            "deliverable": "README.md completo + docs/ com diagramas e guias",
+            "priority": "critical"
+          },
+          {
+            "id": "P6-T3",
+            "name": "Criar manual do usuário",
+            "description": "Elaborar guia ilustrado para clientes e operadores utilizarem a plataforma",
+            "deliverable": "manual_usuario.pdf com screenshots e passo-a-passo",
+            "priority": "high"
+          },
+          {
+            "id": "P6-T4",
+            "name": "Preparar apresentação e defesa do projeto",
+            "description": "Criar slides demonstrando problema, solução, arquitetura, resultados e limitações",
+            "deliverable": "apresentacao_pap.pptx + demo gravada (opcional)",
+            "priority": "critical"
+          },
+          {
+            "id": "P6-T5",
+            "name": "Exportar código e backup do banco para entrega",
+            "description": "Gerar dump do banco de dados de teste e repositório finalizado",
+            "commands": [
+              "pg_dump ende_db > backup_teste.sql",
+              "git archive -o projeto_final.zip HEAD"
+            ],
+            "deliverable": "Pacote completo para avaliação da PAP",
+            "priority": "critical"
+          }
+        ],
+        "dependencies": ["phase_05_seguranca_validacao"],
+        "success_criteria": [
+          "Projeto reproduzível em outro ambiente seguindo documentação",
+          "Todos os requisitos funcionais e não funcionais atendidos",
+          "Entrega alinhada com critérios da Prova de Aptidão Profissional do IMCL"
+        ]
+      }
+    },
+    "global_constraints": {
+      "academic_scope": "Projeto para Prova de Aptidão Profissional - Curso Técnico de Informática de Gestão, IMCL",
+      "payment_simulation": "Pagamentos são registrados internamente sem integração bancária real (escopo académico)",
+      "data_privacy": "Dados de clientes são fictícios ou anonimizados para fins de teste",
+      "scalability_note": "Arquitetura monolítica modular permite evolução futura para microserviços"
+    },
+    "risk_mitigation": [
+      {
+        "risk": "Complexidade excessiva de integração com sistemas externos",
+        "mitigation": "Focar em simulação interna de pagamentos; documentar pontos de extensão para APIs reais futuras"
+      },
+      {
+        "risk": "Falta de dados reais da ENDE para testes",
+        "mitigation": "Criar scripts de seed com dados fictícios realistas representando cenários pré e pós-pago"
+      },
+      {
+        "risk": "Prazo acadêmico limitado",
+        "mitigation": "Priorizar MVP com fluxos críticos; funcionalidades extras como 'nice-to-have'"
+      }
+    ],
+    "success_metrics": {
+      "functional": [
+        "Cliente pré-pago consegue visualizar saldo e registrar recarga em < 3 cliques",
+        "Cliente pós-pago consegue consultar fatura e registrar pagamento em < 2 minutos",
+        "Operador consegue abrir e acompanhar ticket sem dependência de sistema externo"
+      ],
+      "technical": [
+        "0 erros críticos em testes automatizados",
+        "Tempo de resposta médio < 2s para consultas principais",
+        "Código organizado por apps Django com documentação inline"
+      ],
+      "academic": [
+        "Projeto alinhado com objetivos específicos da PAP",
+        "Demonstração clara da aplicação prática dos conhecimentos do curso",
+        "Entrega completa dentro do cronograma académico"
+      ]
+    }
+  }
