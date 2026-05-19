@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from customers.models import Customer
 from .models import CustomUser
 
 
@@ -55,6 +56,7 @@ class RegisterViewTest(TestCase):
         response = self.client.post(reverse('register'), data)
         self.assertRedirects(response, reverse('customers:dashboard'))
         self.assertTrue(CustomUser.objects.filter(username='newuser').exists())
+        self.assertTrue(Customer.objects.filter(user__username='newuser').exists())
 
     def test_register_password_mismatch(self):
         data = {

@@ -106,7 +106,7 @@ class CustomerViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'customers/transaction_history.html')
 
-    def test_no_profile_redirect(self):
+    def test_no_profile_redirect_creates_customer(self):
         self.client.logout()
         user2 = CustomUser.objects.create_user(
             username='noprofile', password='pass123', user_type='client'
@@ -114,4 +114,5 @@ class CustomerViewsTest(TestCase):
         self.client.login(username='noprofile', password='pass123')
         response = self.client.get(reverse('customers:dashboard'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'customers/no_profile.html')
+        self.assertTemplateUsed(response, 'customers/dashboard.html')
+        self.assertTrue(Customer.objects.filter(user=user2).exists())
