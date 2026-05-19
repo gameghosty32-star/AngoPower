@@ -29,16 +29,16 @@
                 <table class="table table-borderless">
                     <tr>
                         <td class="text-muted">Valor total</td>
-                        <td class="fw-bold text-end fs-5">${{ invoice.amount|floatformat:2 }}</td>
+                        <td class="fw-bold text-end fs-5">{{ invoice.amount|floatformat:2 }}Kz</td>
                     </tr>
                     <tr>
                         <td class="text-muted">Valor pago</td>
-                        <td class="text-end fw-bold text-success">${{ invoice.paid_amount|floatformat:2 }}</td>
+                        <td class="text-end fw-bold text-success">{{ invoice.paid_amount|floatformat:2 }}Kz</td>
                     </tr>
                     <tr>
                         <td class="text-muted">Saldo restante</td>
                         <td class="text-end fw-bold text-danger">
-                            ${{ remaining|floatformat:2 }}
+                            {{ remaining|floatformat:2 }}Kz
                         </td>
                     </tr>
                 </table>
@@ -74,7 +74,7 @@
                                 {% for txn in transactions %}
                                 <tr>
                                     <td><code>{{ txn.transaction_id|truncatechars:12 }}</code></td>
-                                    <td class="fw-bold">${{ txn.amount|floatformat:2 }}</td>
+                                    <td class="fw-bold">{{ txn.amount|floatformat:2 }}Kz</td>
                                     <td>
                                         {% if txn.status == 'completed' %}
                                             <span class="badge bg-success">Concluído</span>

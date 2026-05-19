@@ -39,7 +39,7 @@
                                     <span class="badge bg-secondary">{{ txn.get_transaction_type_display }}</span>
                                 {% endif %}
                             </td>
-                            <td class="fw-bold">${{ txn.amount|floatformat:2 }}</td>
+                            <td class="fw-bold">{{ txn.amount|floatformat:2 }}Kz</td>
                             <td>
                                 {% if txn.status == 'completed' %}
                                     <span class="badge bg-success">Concluído</span>

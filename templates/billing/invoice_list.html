@@ -27,8 +27,8 @@
                         {% for inv in invoices %}
                         <tr>
                             <td><strong>{{ inv.invoice_number }}</strong></td>
-                            <td class="fw-bold">${{ inv.amount|floatformat:2 }}</td>
-                            <td>${{ inv.paid_amount|floatformat:2 }}</td>
+                            <td class="fw-bold">{{ inv.amount|floatformat:2 }}Kz</td>
+                            <td>{{ inv.paid_amount|floatformat:2 }}Kz</td>
                             <td>
                                 {% if inv.status == 'paid' %}
                                     <span class="badge bg-success">Pago</span>

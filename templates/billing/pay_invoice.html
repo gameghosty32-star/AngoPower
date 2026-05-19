@@ -10,28 +10,28 @@
                     <div class="row text-center">
                         <div class="col-4">
                             <small class="text-muted d-block">Total</small>
-                            <strong class="fs-5">${{ invoice.amount|floatformat:2 }}</strong>
+                            <strong class="fs-5">{{ invoice.amount|floatformat:2 }}Kz</strong>
                         </div>
                         <div class="col-4">
                             <small class="text-muted d-block">Pago</small>
-                            <strong class="fs-5 text-success">${{ invoice.paid_amount|floatformat:2 }}</strong>
+                            <strong class="fs-5 text-success">{{ invoice.paid_amount|floatformat:2 }}Kz</strong>
                         </div>
                         <div class="col-4">
                             <small class="text-muted d-block">Restante</small>
-                            <strong class="fs-5 text-danger">${{ remaining|floatformat:2 }}</strong>
+                            <strong class="fs-5 text-danger">{{ remaining|floatformat:2 }}Kz</strong>
                         </div>
                     </div>
                 </div>
                 <form method="post" novalidate>
                     {% csrf_token %}
                     <div class="mb-4">
-                        <label for="amount" class="form-label">Valor do pagamento ($)</label>
+                        <label for="amount" class="form-label">Valor do pagamento (Kz)</label>
                         <div class="input-group input-group-lg">
-                            <span class="input-group-text">$</span>
+                            <span class="input-group-text">Kz</span>
                             <input type="number" id="amount" name="amount" step="0.01" min="0.01"
                                    max="{{ remaining }}" required
                                    class="form-control" placeholder="0.00">
-                            <div class="invalid-feedback">Informe um valor entre $0.01 e ${{ remaining|floatformat:2 }}.</div>
+                            <div class="invalid-feedback">Informe um valor entre 500Kz e {{ remaining|floatformat:2 }}Kz.</div>
                         </div>
                     </div>
                     <div class="d-grid gap-2">

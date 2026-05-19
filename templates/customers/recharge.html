@@ -8,14 +8,14 @@
             <div class="card-body p-4">
                 <div class="text-center mb-4">
                     <i class="bi bi-wallet2" style="font-size:2.5rem;color:#dc3545"></i>
-                    <p class="mt-2 mb-0">Saldo atual: <strong class="fs-5">${{ customer.current_balance|floatformat:2 }}</strong></p>
+                    <p class="mt-2 mb-0">Saldo atual: <strong class="fs-5">{{ customer.current_balance|floatformat:2 }}Kz</strong></p>
                 </div>
                 <form method="post" novalidate>
                     {% csrf_token %}
                     <div class="mb-4">
-                        <label for="amount" class="form-label">Valor da recarga ($)</label>
+                        <label for="amount" class="form-label">Valor da recarga (Kz)</label>
                         <div class="input-group input-group-lg">
-                            <span class="input-group-text">$</span>
+                            <span class="input-group-text">Kz</span>
                             <input type="number" id="amount" name="amount" step="0.01" min="0.01" required
                                    class="form-control" placeholder="0.00">
                             <div class="invalid-feedback">Informe um valor positivo.</div>

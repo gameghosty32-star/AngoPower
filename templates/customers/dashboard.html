@@ -10,14 +10,14 @@
     <div class="col-md-3 col-6">
         <div class="stat-card">
             <div class="icon"><i class="bi bi-wallet2"></i></div>
-            <div class="value">${{ customer.current_balance|floatformat:2 }}</div>
+            <div class="value">{{ customer.current_balance|floatformat:2 }}Kz</div>
             <div class="label">Saldo Atual</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
         <div class="stat-card">
             <div class="icon"><i class="bi bi-exclamation-triangle"></i></div>
-            <div class="value">${{ customer.debt|floatformat:2 }}</div>
+            <div class="value">{{ customer.debt|floatformat:2 }}Kz</div>
             <div class="label">Dívida Pendente</div>
         </div>
     </div>
@@ -87,7 +87,7 @@
                                 {% for txn in recent_transactions %}
                                 <tr>
                                     <td><code>{{ txn.transaction_id|truncatechars:12 }}</code></td>
-                                    <td class="fw-bold">${{ txn.amount|floatformat:2 }}</td>
+                                    <td class="fw-bold">{{ txn.amount|floatformat:2 }}Kz</td>
                                     <td>
                                         {% if txn.status == 'completed' %}
                                             <span class="badge bg-success">Concluído</span>

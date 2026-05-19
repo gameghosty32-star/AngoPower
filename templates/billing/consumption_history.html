@@ -31,7 +31,7 @@
                     </div>
                     <hr>
                     <div class="text-center mb-3">
-                        <div class="fs-5 fw-bold text-success">${{ total_consumption|default:0|floatformat:2 }}</div>
+                        <div class="fs-5 fw-bold text-success">{{ total_consumption|default:0|floatformat:2 }}Kz</div>
                         <small class="text-muted">Consumo total</small>
                     </div>
                     <hr>
@@ -76,7 +76,7 @@
                                     <span class="badge bg-success">Crédito</span>
                                 {% endif %}
                             </td>
-                            <td class="fw-bold">${{ txn.amount|floatformat:2 }}</td>
+                            <td class="fw-bold">{{ txn.amount|floatformat:2 }}Kz</td>
                             <td>
                                 {% if txn.status == 'completed' %}
                                     <span class="badge bg-success">Concluído</span>
