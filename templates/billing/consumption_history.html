@@ -26,7 +26,7 @@
             <div class="card-body">
                 {% if transactions %}
                     <div class="text-center mb-3">
-                        <div class="display-6 fw-bold" style="color:#1a237e">{{ transactions|length }}</div>
+                        <div class="display-6 fw-bold" style="color:#212529">{{ transactions|length }}</div>
                         <small class="text-muted">Total de transações</small>
                     </div>
                     <hr>
@@ -36,7 +36,7 @@
                     </div>
                     <hr>
                     <div class="text-center">
-                        <div class="fs-5 fw-bold text-primary">{{ avg_monthly|default:0|floatformat:2 }}</div>
+                        <div class="fs-5 fw-bold text-danger">{{ avg_monthly|default:0|floatformat:2 }}</div>
                         <small class="text-muted">Média mensal</small>
                     </div>
                 {% else %}
@@ -113,8 +113,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Consumo ($)',
                     data: [{% for txn in transactions %}{{ txn.amount }}{% if not forloop.last %},{% endif %}{% endfor %}],
-                    backgroundColor: 'rgba(26, 35, 126, 0.6)',
-                    borderColor: '#1a237e',
+                    backgroundColor: 'rgba(220, 53, 69, 0.6)',
+                    borderColor: '#dc3545',
                     borderWidth: 2,
                     borderRadius: 6,
                 }]

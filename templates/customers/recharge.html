@@ -7,7 +7,7 @@
         <div class="card shadow-sm">
             <div class="card-body p-4">
                 <div class="text-center mb-4">
-                    <i class="bi bi-wallet2" style="font-size:2.5rem;color:#2e7d32"></i>
+                    <i class="bi bi-wallet2" style="font-size:2.5rem;color:#dc3545"></i>
                     <p class="mt-2 mb-0">Saldo atual: <strong class="fs-5">${{ customer.current_balance|floatformat:2 }}</strong></p>
                 </div>
                 <form method="post" novalidate>
@@ -22,7 +22,7 @@
                         </div>
                     </div>
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success btn-lg">
+                        <button type="submit" class="btn btn-primary btn-lg">
                             <i class="bi bi-check-circle"></i> Confirmar Recarga
                         </button>
                         <a href="{% url 'customers:dashboard' %}" class="btn btn-outline-secondary">

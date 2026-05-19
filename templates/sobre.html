@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Sobre Nós{% endblock %}
+{% block content %}
+<div class="text-center mb-5">
+    <img src="{% static 'logo.png' %}" alt="ENDE Logo" height="80" class="mb-3">
+    <h1 class="fw-bold" style="color:#212529">ENDE Platform</h1>
+    <p class="text-muted lead">Plataforma de gestão de energia eléctrica</p>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        <img src="{% static 'foto_do_edicifico_com_log.jpg' %}" alt="Edifício ENDE" class="img-fluid rounded shadow-sm w-100" style="object-fit:cover;max-height:350px">
+    </div>
+    <div class="col-md-6 d-flex flex-column justify-content-center">
+        <h3 class="fw-bold" style="color:#212529">Quem Somos</h3>
+        <p>A ENDE Platform é uma solução digital desenvolvida para facilitar a gestão de energia eléctrica, oferecendo serviços pré-pagos e pós-pagos, consulta de saldo, pagamento de faturas, e suporte ao cliente.</p>
+        <p>Com uma interface moderna e segura, a plataforma permite que os clientes acompanhem o seu consumo, recarreguem saldo, e resolvam problemas de forma rápida e eficiente.</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-4">
+                <img src="{% static 'banner-call-cenceter.png' %}" alt="Apoio ao Cliente" class="img-fluid rounded mb-3" style="max-height:200px;object-fit:cover;width:100%">
+                <h5 class="fw-bold" style="color:#212529">Apoio ao Cliente</h5>
+                <p class="text-muted mb-0">Equipa dedicada para resolver as suas dúvidas e problemas com rapidez e eficiência.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-4">
+                <img src="{% static 'banner-denuncie.png' %}" alt="Denúncia" class="img-fluid rounded mb-3" style="max-height:200px;object-fit:cover;width:100%">
+                <h5 class="fw-bold" style="color:#212529">Canal de Denúncia</h5>
+                <p class="text-muted mb-0">Denuncie irregularidades de forma anónima e segura. A sua contribuição ajuda a melhorar o serviço.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center">
+    <h3 class="fw-bold mb-4" style="color:#212529">Os Nossos Serviços</h3>
+    <div class="row g-3 justify-content-center">
+        <div class="col-md-3 col-6">
+            <div class="p-3 rounded bg-white shadow-sm">
+                <i class="bi bi-wallet2 fs-1" style="color:#dc3545"></i>
+                <p class="fw-bold mt-2 mb-0">Saldo</p>
+                <small class="text-muted">Consulte e recarregue</small>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-3 rounded bg-white shadow-sm">
+                <i class="bi bi-file-text fs-1" style="color:#dc3545"></i>
+                <p class="fw-bold mt-2 mb-0">Faturas</p>
+                <small class="text-muted">Pague online</small>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-3 rounded bg-white shadow-sm">
+                <i class="bi bi-graph-up fs-1" style="color:#dc3545"></i>
+                <p class="fw-bold mt-2 mb-0">Consumo</p>
+                <small class="text-muted">Acompanhe</small>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-3 rounded bg-white shadow-sm">
+                <i class="bi bi-ticket fs-1" style="color:#dc3545"></i>
+                <p class="fw-bold mt-2 mb-0">Suporte</p>
+                <small class="text-muted">Abra tickets</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

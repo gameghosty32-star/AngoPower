@@ -9,18 +9,19 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     {% block extra_head %}{% endblock %}
     <style>
-        body { background: #f0f2f5; min-height: 100vh; display: flex; flex-direction: column; }
+        :root { --bs-primary: #dc3545; --bs-primary-rgb: 220,53,69; }
+        body { background: #fff; min-height: 100vh; display: flex; flex-direction: column; }
         .navbar-brand { font-weight: 700; letter-spacing: 0.5px; }
         .navbar-brand i { font-size: 1.5rem; margin-right: 0.5rem; }
         .main-content { flex: 1; }
-        .footer { background: #1a237e; color: rgba(255,255,255,0.8); padding: 1rem 0; margin-top: auto; font-size: 0.875rem; }
+        .footer { background: #212529; color: rgba(255,255,255,0.8); padding: 1rem 0; margin-top: auto; font-size: 0.875rem; }
         .stat-card { background: white; border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 1.5rem; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
-        .stat-card .value { font-size: 2rem; font-weight: 700; color: #1a237e; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: #212529; }
         .stat-card .label { color: #6c757d; font-size: 0.85rem; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-card .icon { font-size: 2rem; color: #1a237e; margin-bottom: 0.5rem; }
+        .stat-card .icon { font-size: 2rem; color: #dc3545; margin-bottom: 0.5rem; }
         .card { border: none; border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .card-header { background: white; border-bottom: 2px solid #f0f2f5; font-weight: 600; padding: 1rem 1.25rem; }
+        .card-header { background: white; border-bottom: 2px solid #dc3545; font-weight: 600; padding: 1rem 1.25rem; }
         .table th { border-top: none; background: #f8f9fa; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: #6c757d; }
         .table td { vertical-align: middle; }
         .notification-badge { background: #dc3545; color: white; border-radius: 50%; padding: 0.15rem 0.5rem; font-size: 0.7rem; font-weight: 700; margin-left: 0.25rem; line-height: 1; }
@@ -28,12 +29,13 @@
         .message-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; max-width: 400px; }
         .message-container .alert { box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .page-title { font-weight: 700; color: #1a237e; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 3px solid #e8eaf6; }
+        .page-title { font-weight: 700; color: #212529; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 3px solid #dc3545; }
         @media (max-width: 768px) { .stat-card .value { font-size: 1.5rem; } }
+        .nav-link.sobre-link { border-left: 1px solid rgba(255,255,255,0.2); padding-left: 1rem; margin-left: 0.5rem; }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background:#1a237e">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background:#212529">
         <div class="container">
             <a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'customers:dashboard' %}{% else %}{% url 'login' %}{% endif %}">
                 <i class="bi bi-lightning-fill"></i>ENDE Platform
@@ -43,6 +45,11 @@
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link sobre-link" href="{% url 'sobre' %}">
+                            <i class="bi bi-info-circle"></i> Sobre
+                        </a>
+                    </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'customers:dashboard' %}">
@@ -51,7 +58,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link position-relative" href="{% url 'notifications:list' %}">
-                                <i class="bi bi-bell"></i> Notifications
+                                <i class="bi bi-bell"></i> Notificações
                                 {% if unread_count %}
                                     <span class="notification-badge position-absolute top-0 start-100 translate-middle">{{ unread_count }}</span>
                                 {% endif %}
@@ -69,7 +76,7 @@
                                     <form method="post" action="{% url 'logout' %}">
                                         {% csrf_token %}
                                         <button type="submit" class="dropdown-item">
-                                            <i class="bi bi-box-arrow-right"></i> Logout
+                                            <i class="bi bi-box-arrow-right"></i> Sair
                                         </button>
                                     </form>
                                 </li>
@@ -78,12 +85,12 @@
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">
-                                <i class="bi bi-box-arrow-in-right"></i> Login
+                                <i class="bi bi-box-arrow-in-right"></i> Entrar
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'register' %}">
-                                <i class="bi bi-person-plus"></i> Register
+                                <i class="bi bi-person-plus"></i> Cadastrar
                             </a>
                         </li>
                     {% endif %}
