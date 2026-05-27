@@ -51,57 +51,60 @@ def gateway_select(request, context_key, context_value):
 def gateway_process(request, gateway_code, context_key, context_value):
     customer = _get_customer(request.user)
     gateway = get_object_or_404(PaymentGateway, code=gateway_code, is_active=True)
-
     amount = float(request.GET.get('amount', 0))
     phone = request.GET.get('phone', customer.phone)
-
     if amount <= 0:
-        messages.error(request, 'Invalid payment amount.')
+        messages.error(request, 'Valor de pagamento inválido.')
+        return redirect('customers:dashboard')
+    response = services.process_gateway_payment(gateway_code, amount, phone)
+    try:
+        with db_transaction.atomic():
+            if context_key == 'recharge':
+                txn = process_payment(
+                    customer_id=customer.pk,
+                    amount=amount,
+                    description=f'Recarga via {gateway.name}',
+                    gateway_code=gateway_code,
+                )
+                success_url = 'prepaid:balance'
+            elif context_key == 'pay_invoice':
+                from billing_app.models import Invoice
+                invoice = get_object_or_404(Invoice, pk=int(context_value), customer=customer)
+                remaining = float(invoice.amount - (invoice.paid_amount or 0))
+                if amount > remaining:
+                    raise ValueError('Valor excede o saldo restante da factura.')
+                txn = process_payment(
+                    customer_id=customer.pk,
+                    amount=amount,
+                    payment_type='payment',
+                    invoice_id=invoice.pk,
+                    description=f'Pagamento factura {invoice.invoice_number} via {gateway.name}',
+                    gateway_code=gateway_code,
+                )
+                success_url = 'postpaid:invoice_detail'
+            else:
+                txn = process_payment(
+                    customer_id=customer.pk,
+                    amount=amount,
+                    description=f'Pagamento via {gateway.name}',
+                    gateway_code=gateway_code,
+                )
+                success_url = 'customers:dashboard'
+    except Exception as e:
+        messages.error(request, f'Erro ao processar pagamento: {e}')
         return redirect('customers:dashboard')
 
-    response = services.process_gateway_payment(gateway_code, amount, phone)
-
-    with db_transaction.atomic():
-        if context_key == 'recharge':
-            txn = process_payment(
-                customer_id=customer.pk,
-                amount=amount,
-                description=f'Recarga via {gateway.name}',
-                gateway_code=gateway_code,
-            )
-        elif context_key == 'pay_invoice':
-            from billing_app.models import Invoice
-            invoice = get_object_or_404(Invoice, pk=int(context_value), customer=customer)
-            remaining = float(invoice.amount - (invoice.paid_amount or 0))
-            if amount > remaining:
-                raise ValueError('Amount exceeds remaining balance')
-            txn = process_payment(
-                customer_id=customer.pk,
-                amount=amount,
-                payment_type='payment',
-                invoice_id=invoice.pk,
-                description=f'Pagamento fatura {invoice.invoice_number} via {gateway.name}',
-                gateway_code=gateway_code,
-            )
-        else:
-            txn = process_payment(
-                customer_id=customer.pk,
-                amount=amount,
-                description=f'Pagamento via {gateway.name}',
-                gateway_code=gateway_code,
-            )
-
-        gateway_status = 'success' if response['success'] else 'failed'
-        services.create_gateway_transaction(
-            gateway=gateway,
-            transaction=txn,
-            gateway_reference=response.get('reference', ''),
-            status=gateway_status,
-            response_data=response,
-        )
-        if not response['success']:
-            txn.status = 'failed'
-            txn.save(update_fields=['status'])
+    gateway_status = 'success' if response['success'] else 'failed'
+    services.create_gateway_transaction(
+        gateway=gateway,
+        transaction=txn,
+        gateway_reference=response.get('reference', ''),
+        status=gateway_status,
+        response_data=response,
+    )
+    if not response['success']:
+        txn.status = 'failed'
+        txn.save(update_fields=['status'])
 
     return render(request, 'payment_gateways/result.html', {
         'customer': customer,
@@ -109,6 +112,9 @@ def gateway_process(request, gateway_code, context_key, context_value):
         'transaction': txn,
         'response': response,
         'success': response['success'],
+        'context_key': context_key,
+        'context_value': context_value,
+        'success_url': success_url,
     })
 
 

@@ -141,12 +141,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'IMAGES']
+STATICFILES_DIRS = [BASE_DIR / 'IMAGES', BASE_DIR / 'static']
 
 DEFAULT_FROM_EMAIL = 'noreply@ende.ao'
 
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/customers/'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
 
 # Security settings

@@ -3,9 +3,12 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="page-title mb-0"><i class="bi bi-speedometer2 me-2"></i>Dashboard Administrativo</h4>
-    <a href="{% url 'admin:index' %}" class="btn btn-outline-primary btn-sm">
-        <i class="bi bi-gear"></i> Admin Django
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{% url 'dashboard:customer_list' %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-people"></i> Clientes</a>
+        <a href="{% url 'dashboard:invoice_list_admin' %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-text"></i> Facturas</a>
+        <a href="{% url 'dashboard:agent' %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-headset"></i> Tickets</a>
+        <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-gear"></i> Admin Django</a>
+    </div>
 </div>
 
 <div class="row g-3 mb-4">
@@ -13,7 +16,7 @@
         <div class="stat-card">
             <div class="icon"><i class="bi bi-people"></i></div>
             <div class="value">{{ total_customers }}</div>
-            <div class="label">Total de Clientes</div>
+            <div class="label">Total Clientes</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
@@ -46,13 +49,6 @@
     </div>
     <div class="col-md-3 col-6">
         <div class="stat-card">
-            <div class="icon"><i class="bi bi-file-earmark-text"></i></div>
-            <div class="value">{{ total_invoices }}</div>
-            <div class="label">Total Faturas</div>
-        </div>
-    </div>
-    <div class="col-md-3 col-6">
-        <div class="stat-card">
             <div class="icon"><i class="bi bi-clock"></i></div>
             <div class="value">{{ pending_contracts }}</div>
             <div class="label">Contratos Pendentes</div>
@@ -60,40 +56,59 @@
     </div>
 </div>
 
-<div class="card shadow-sm">
-    <div class="card-header"><i class="bi bi-clock-history me-2"></i>Transacções Recentes</div>
-    <div class="card-body p-0">
-        {% if recent_transactions %}
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Cliente</th>
-                            <th>Valor</th>
-                            <th>Tipo</th>
-                            <th>Data</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for txn in recent_transactions %}
-                        <tr>
-                            <td><code>{{ txn.transaction_id|truncatechars:12 }}</code></td>
-                            <td>{{ txn.customer.user.username }}</td>
-                            <td class="fw-bold">{{ txn.amount|floatformat:2 }}Kz</td>
-                            <td><span class="badge bg-info">{{ txn.get_transaction_type_display }}</span></td>
-                            <td class="text-muted">{{ txn.created_at|date:"d/m/Y H:i" }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-ticket me-2"></i>Últimos Tickets</span>
+                <a href="{% url 'dashboard:agent' %}" class="btn btn-sm btn-outline-primary">Ver todos</a>
             </div>
-        {% else %}
-            <div class="text-center py-4 text-muted">
-                <i class="bi bi-inbox" style="font-size:2rem"></i>
-                <p class="mt-2 mb-0">Nenhuma transacção recente.</p>
+            <div class="card-body p-0">
+                {% if recent_tickets %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead><tr><th>Protocolo</th><th>Cliente</th><th>Prioridade</th><th>Status</th></tr></thead>
+                        <tbody>
+                            {% for t in recent_tickets %}
+                            <tr>
+                                <td><code>{{ t.protocol }}</code></td>
+                                <td>{{ t.customer.meter_number }}</td>
+                                <td>{% if t.priority == 'urgent' %}<span class="badge bg-danger">Urgente</span>{% elif t.priority == 'high' %}<span class="badge bg-warning text-dark">Alta</span>{% elif t.priority == 'medium' %}<span class="badge bg-info">Média</span>{% else %}<span class="badge bg-secondary">Baixa</span>{% endif %}</td>
+                                <td>{% if t.status == 'open' %}<span class="badge bg-danger">Aberto</span>{% elif t.status == 'in_progress' %}<span class="badge bg-warning text-dark">Andamento</span>{% elif t.status == 'resolved' %}<span class="badge bg-info">Resolvido</span>{% else %}<span class="badge bg-secondary">Fechado</span>{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted"><i class="bi bi-inbox" style="font-size:2rem"></i><p class="mt-2 mb-0">Nenhum ticket recente.</p></div>
+                {% endif %}
             </div>
-        {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header"><i class="bi bi-gear me-2"></i>Acções Rápidas</div>
+            <div class="card-body">
+                <div class="d-grid gap-3">
+                    <a href="{% url 'dashboard:customer_list' %}" class="btn btn-outline-primary btn-action text-start">
+                        <i class="bi bi-people me-2"></i>Gerir Clientes e Contadores
+                    </a>
+                    <a href="{% url 'dashboard:invoice_list_admin' %}" class="btn btn-outline-primary btn-action text-start">
+                        <i class="bi bi-file-text me-2"></i>Gerir Facturas
+                    </a>
+                    <a href="{% url 'dashboard:agent' %}" class="btn btn-outline-warning btn-action text-start">
+                        <i class="bi bi-headset me-2"></i>Painel do Agente (Tickets)
+                    </a>
+                    <a href="{% url 'postpaid:admin_approve' %}" class="btn btn-outline-info btn-action text-start">
+                        <i class="bi bi-file-check me-2"></i>Aprovar Contratos Pós-pago
+                    </a>
+                    <a href="{% url 'dashboard:settings' %}" class="btn btn-outline-secondary btn-action text-start">
+                        <i class="bi bi-palette me-2"></i>Definições e Temas
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

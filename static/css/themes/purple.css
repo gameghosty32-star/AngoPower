@@ -1,0 +1,115 @@
+/* Tema Roxo-Violeta Tech Neon */
+[data-theme="purple"] {
+  --theme-primary: #a855f7;
+  --theme-primary-hover: #9333ea;
+  --theme-primary-rgb: 168, 85, 247;
+  --theme-bg: #0a0a0f;
+  --theme-card-bg: #141420;
+  --theme-text: #e2e8f0;
+  --theme-text-muted: #94a3b8;
+  --theme-navbar-bg: #0a0a0f;
+  --theme-navbar-text: rgba(255,255,255,0.9);
+  --theme-footer-bg: #0a0a0f;
+  --theme-footer-text: rgba(255,255,255,0.7);
+  --theme-input-bg: #1e1e2e;
+  --theme-input-border: #374151;
+  --theme-table-stripe: rgba(168, 85, 247, 0.05);
+  --theme-glow: 0 0 20px rgba(168, 85, 247, 0.3);
+  --theme-neon-border: 0 0 5px rgba(168, 85, 247, 0.2);
+}
+
+[data-theme="purple"] body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+[data-theme="purple"] .card,
+[data-theme="purple"] .stat-card,
+[data-theme="purple"] .card-header {
+  background-color: var(--theme-card-bg);
+  color: var(--theme-text);
+  box-shadow: var(--theme-neon-border);
+}
+
+[data-theme="purple"] .card {
+  border: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+[data-theme="purple"] .stat-card {
+  border: 1px solid rgba(168, 85, 247, 0.1);
+}
+
+[data-theme="purple"] .table {
+  color: var(--theme-text);
+}
+
+[data-theme="purple"] .table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: var(--theme-table-stripe);
+}
+
+[data-theme="purple"] .form-control,
+[data-theme="purple"] .form-select {
+  background-color: var(--theme-input-bg);
+  border-color: var(--theme-input-border);
+  color: var(--theme-text);
+}
+
+[data-theme="purple"] .form-control:focus,
+[data-theme="purple"] .form-select:focus {
+  border-color: var(--theme-primary);
+  box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.25);
+}
+
+[data-theme="purple"] .text-muted {
+  color: var(--theme-text-muted) !important;
+}
+
+[data-theme="purple"] .bg-light {
+  background-color: #1e1e2e !important;
+}
+
+[data-theme="purple"] .table-hover tbody tr:hover {
+  background-color: rgba(168, 85, 247, 0.08);
+}
+
+[data-theme="purple"] .btn-primary {
+  background-color: var(--theme-primary);
+  border-color: var(--theme-primary);
+  box-shadow: var(--theme-glow);
+}
+
+[data-theme="purple"] .btn-primary:hover {
+  background-color: var(--theme-primary-hover);
+  border-color: var(--theme-primary-hover);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+}
+
+[data-theme="purple"] .btn-outline-primary {
+  color: var(--theme-primary);
+  border-color: var(--theme-primary);
+}
+
+[data-theme="purple"] .btn-outline-primary:hover {
+  background-color: var(--theme-primary);
+  border-color: var(--theme-primary);
+}
+
+[data-theme="purple"] .page-title {
+  border-bottom-color: var(--theme-primary);
+}
+
+[data-theme="purple"] .card-header {
+  border-bottom: 2px solid var(--theme-primary);
+}
+
+[data-theme="purple"] .form-control:focus,
+[data-theme="purple"] .form-select:focus,
+[data-theme="purple"] .btn:focus {
+  box-shadow: var(--theme-glow);
+}
+
+[data-theme="purple"] .input-group-text {
+  background-color: var(--theme-input-bg);
+  border-color: var(--theme-input-border);
+  color: var(--theme-text);
+}

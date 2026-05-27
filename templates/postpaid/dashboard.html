@@ -55,6 +55,9 @@
                     <a href="{% url 'postpaid:debt_pdf' %}" class="btn btn-outline-danger btn-action text-start">
                         <i class="bi bi-file-earmark-pdf me-2"></i>Baixar Dívida (PDF)
                     </a>
+                    <a href="{% url 'postpaid:invoice_list' %}?status=issued" class="btn btn-success btn-action text-start">
+                        <i class="bi bi-credit-card me-2"></i>Pagar Facturas Pendentes
+                    </a>
                 </div>
             </div>
         </div>
@@ -97,6 +100,11 @@
                                         <a href="{% url 'postpaid:invoice_detail' inv.pk %}" class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-eye"></i>
                                         </a>
+                                        {% if inv.status != 'paid' %}
+                                        <a href="{% url 'postpaid:pay_invoice' inv.pk %}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-credit-card"></i>
+                                        </a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}

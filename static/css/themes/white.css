@@ -1,0 +1,39 @@
+/* Tema Branco — Clean */
+[data-theme="white"] {
+  --theme-primary: #212529;
+  --theme-primary-hover: #000000;
+  --theme-primary-rgb: 33, 37, 41;
+  --theme-bg: #ffffff;
+  --theme-card-bg: #ffffff;
+  --theme-text: #212529;
+  --theme-text-muted: #6c757d;
+  --theme-navbar-bg: #212529;
+  --theme-navbar-text: rgba(255,255,255,0.85);
+  --theme-footer-bg: #212529;
+  --theme-footer-text: rgba(255,255,255,0.8);
+  --theme-input-bg: #fff;
+  --theme-input-border: #dee2e6;
+  --theme-table-stripe: rgba(0,0,0,0.02);
+}
+
+[data-theme="white"] body {
+  background-color: var(--theme-bg);
+}
+
+[data-theme="white"] .card-header {
+  border-bottom-color: var(--theme-primary);
+}
+
+[data-theme="white"] .btn-primary {
+  background-color: var(--theme-primary);
+  border-color: var(--theme-primary);
+}
+
+[data-theme="white"] .btn-primary:hover {
+  background-color: var(--theme-primary-hover);
+  border-color: var(--theme-primary-hover);
+}
+
+[data-theme="white"] .page-title {
+  border-bottom-color: var(--theme-primary);
+}

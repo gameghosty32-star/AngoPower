@@ -5,12 +5,12 @@ from .models import PaymentGateway, GatewayTransaction
 
 
 def _simulate_gateway_response(gateway_code, amount, phone):
-    success = random.random() > 0.1
+    success = True
     reference = f"{gateway_code.upper()}-{uuid.uuid4().hex[:10].upper()}"
     return {
         'success': success,
         'reference': reference,
-        'message': 'Transaction completed successfully' if success else 'Transaction failed',
+        'message': 'Transacção processada com sucesso' if success else 'Falha na transacção',
     }
 
 

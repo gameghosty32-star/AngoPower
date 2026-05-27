@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Gestão de Facturas{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="page-title mb-0"><i class="bi bi-file-text me-2"></i>Gestão de Facturas</h4>
+    <a href="{% url 'dashboard:admin' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Voltar</a>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2">
+            <div class="col-md-4">
+                <input type="text" name="q" class="form-control" placeholder="Nº factura, contador, username..." value="{{ q }}">
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="">Todos os status</option>
+                    <option value="issued" {% if status_filter == 'issued' %}selected{% endif %}>Emitida</option>
+                    <option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>Paga</option>
+                    <option value="overdue" {% if status_filter == 'overdue' %}selected{% endif %}>Vencida</option>
+                    <option value="partially_paid" {% if status_filter == 'partially_paid' %}selected{% endif %}>Parcial</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Filtrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Factura</th>
+                        <th>Cliente</th>
+                        <th>Contador</th>
+                        <th>Valor</th>
+                        <th>Pago</th>
+                        <th>Status</th>
+                        <th>Vencimento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inv in invoices %}
+                    <tr>
+                        <td><strong>{{ inv.invoice_number }}</strong></td>
+                        <td>{{ inv.customer.user.username }}</td>
+                        <td><code>{{ inv.customer.meter_number }}</code></td>
+                        <td class="fw-bold">{{ inv.amount|floatformat:2 }}Kz</td>
+                        <td>{{ inv.paid_amount|floatformat:2 }}Kz</td>
+                        <td>
+                            {% if inv.status == 'paid' %}<span class="badge bg-success">Paga</span>
+                            {% elif inv.status == 'overdue' %}<span class="badge bg-danger">Vencida</span>
+                            {% elif inv.status == 'issued' %}<span class="badge bg-primary">Emitida</span>
+                            {% elif inv.status == 'partially_paid' %}<span class="badge bg-warning text-dark">Parcial</span>
+                            {% else %}<span class="badge bg-secondary">{{ inv.get_status_display }}</span>{% endif %}
+                        </td>
+                        <td class="text-muted">{{ inv.due_date|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="text-center py-4 text-muted">Nenhuma factura encontrada.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -8,9 +8,28 @@
     <link href="{% static 'bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="{% static 'css/ende_theme.css' %}" rel="stylesheet">
-    <meta name="theme-color" content="#E30613">
+    <meta name="theme-color" content="#E30613" id="meta-theme-color">
     <link rel="manifest" href="{% static 'manifest.json' %}">
     {% block extra_head %}{% endblock %}
+    <script>
+        (function(){
+            try {
+                var t = localStorage.getItem('ende_theme') || 'red';
+                document.documentElement.setAttribute('data-theme', t);
+                var themes = {
+                    'red': "{% static 'css/themes/red.css' %}",
+                    'black': "{% static 'css/themes/black.css' %}",
+                    'white': "{% static 'css/themes/white.css' %}",
+                    'purple': "{% static 'css/themes/purple.css' %}"
+                };
+                if (themes[t]) {
+                    var l = document.createElement('link');
+                    l.id = 'theme-css'; l.rel = 'stylesheet'; l.href = themes[t];
+                    document.head.appendChild(l);
+                }
+            } catch(e) {}
+        })();
+    </script>
     <style>
         .message-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; max-width: 400px; }
         .message-container .alert { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -23,7 +42,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'customers:dashboard' %}{% else %}{% url 'login' %}{% endif %}">
+            <a class="navbar-brand" href="{% if user.is_authenticated %}{% if user.user_type == 'admin' %}{% url 'dashboard:admin' %}{% elif user.user_type == 'operator' %}{% url 'dashboard:agent' %}{% else %}{% url 'customers:dashboard' %}{% endif %}{% else %}{% url 'login' %}{% endif %}">
                 <i class="bi bi-lightning-fill"></i>ENDE Platform
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -37,11 +56,34 @@
                         </a>
                     </li>
                     {% if user.is_authenticated %}
+                        {% if user.user_type == 'admin' or user.user_type == 'operator' %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-grid"></i> Gestão
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><h6 class="dropdown-header"><i class="bi bi-speedometer2"></i> Painéis</h6></li>
+                                {% if user.user_type == 'admin' %}
+                                <li><a class="dropdown-item" href="{% url 'dashboard:admin' %}"><i class="bi bi-speedometer2"></i> Dashboard Admin</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'dashboard:agent' %}"><i class="bi bi-headset"></i> Painel do Agente</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header"><i class="bi bi-people"></i> Clientes</h6></li>
+                                <li><a class="dropdown-item" href="{% url 'dashboard:customer_list' %}"><i class="bi bi-person-lines-fill"></i> Listar Clientes</a></li>
+                                <li><a class="dropdown-item" href="{% url 'dashboard:invoice_list_admin' %}"><i class="bi bi-receipt"></i> Facturas</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header"><i class="bi bi-wrench"></i> Administração</h6></li>
+                                <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear"></i> Admin Django</a></li>
+                                <li><a class="dropdown-item" href="{% url 'postpaid:admin_approve' %}"><i class="bi bi-file-check"></i> Aprovar Contratos</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'customers:dashboard' %}">
                                 <i class="bi bi-speedometer2"></i> Dashboard
                             </a>
                         </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link position-relative" href="{% url 'notifications:list' %}">
                                 <i class="bi bi-bell"></i> Notificações
@@ -50,21 +92,6 @@
                                 {% endif %}
                             </a>
                         </li>
-                        {% if user.user_type == 'admin' or user.user_type == 'operator' %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-grid"></i> Gestão
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                {% if user.user_type == 'admin' %}
-                                <li><a class="dropdown-item" href="{% url 'dashboard:admin' %}"><i class="bi bi-speedometer2"></i> Dashboard Admin</a></li>
-                                {% endif %}
-                                <li><a class="dropdown-item" href="{% url 'dashboard:agent' %}"><i class="bi bi-headset"></i> Painel do Agente</a></li>
-                                <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear"></i> Admin Django</a></li>
-                                <li><a class="dropdown-item" href="{% url 'postpaid:admin_approve' %}"><i class="bi bi-file-check"></i> Aprovar Contratos</a></li>
-                            </ul>
-                        </li>
-                        {% endif %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle"></i> {{ user.username }}
@@ -72,6 +99,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><h6 class="dropdown-header">{{ user.email|default:user.username }}</h6></li>
+                                <li><a class="dropdown-item" href="{% url 'dashboard:settings' %}"><i class="bi bi-palette"></i> Definições</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="post" action="{% url 'logout' %}">

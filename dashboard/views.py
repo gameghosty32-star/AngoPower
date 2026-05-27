@@ -9,7 +9,15 @@ from billing_app.models import Invoice
 from payments.models import Transaction
 from support.models import Ticket, Category, Message
 from postpaid.models import PostpaidContract
-from notifications.models import Notification
+
+
+@login_required
+def login_redirect(request):
+    if request.user.user_type == 'admin':
+        return redirect('dashboard:admin')
+    elif request.user.user_type == 'operator':
+        return redirect('dashboard:agent')
+    return redirect('customers:dashboard')
 
 
 def _admin_or_operator(user):
@@ -22,22 +30,89 @@ def admin_dashboard(request):
     total_customers = Customer.objects.count()
     prepaid_count = Customer.objects.filter(customer_type='prepaid').count()
     postpaid_count = Customer.objects.filter(customer_type='postpaid').count()
-    total_invoices = Invoice.objects.count()
     total_revenue = Transaction.objects.filter(
         status='completed', transaction_type='payment'
     ).aggregate(total=Sum('amount'))['total'] or 0
     open_tickets = Ticket.objects.filter(status__in=('open', 'in_progress')).count()
     pending_contracts = PostpaidContract.objects.filter(status='pending').count()
-    recent_transactions = Transaction.objects.filter(status='completed').select_related('customer__user').order_by('-created_at')[:10]
+    recent_tickets = Ticket.objects.select_related('customer__user', 'category').order_by('-created_at')[:5]
     return render(request, 'dashboard/admin_dashboard.html', {
         'total_customers': total_customers,
         'prepaid_count': prepaid_count,
         'postpaid_count': postpaid_count,
-        'total_invoices': total_invoices,
         'total_revenue': total_revenue,
         'open_tickets': open_tickets,
         'pending_contracts': pending_contracts,
-        'recent_transactions': recent_transactions,
+        'recent_tickets': recent_tickets,
+    })
+
+
+@login_required
+@user_passes_test(_admin_or_operator)
+def customer_list(request):
+    q = request.GET.get('q', '')
+    customers = Customer.objects.select_related('user').all()
+    if q:
+        customers = customers.filter(
+            Q(user__username__icontains=q) |
+            Q(meter_number__icontains=q) |
+            Q(user__email__icontains=q) |
+            Q(phone__icontains=q)
+        )
+    return render(request, 'dashboard/customer_list.html', {
+        'customers': customers,
+        'q': q,
+    })
+
+
+@login_required
+@user_passes_test(lambda u: u.user_type == 'admin')
+def customer_edit(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    if request.method == 'POST':
+        customer.meter_number = request.POST.get('meter_number', customer.meter_number)
+        customer.customer_type = request.POST.get('customer_type', customer.customer_type)
+        customer.current_balance = request.POST.get('current_balance', customer.current_balance)
+        customer.debt = request.POST.get('debt', customer.debt)
+        customer.phone = request.POST.get('phone', customer.phone)
+        customer.address = request.POST.get('address', customer.address)
+        customer.province = request.POST.get('province', customer.province)
+        customer.municipio = request.POST.get('municipio', customer.municipio)
+        customer.save()
+        messages.success(request, f'Cliente {customer.meter_number} actualizado.')
+        return redirect('dashboard:customer_list')
+    return render(request, 'dashboard/customer_edit.html', {'customer': customer})
+
+
+@login_required
+@user_passes_test(lambda u: u.user_type == 'admin')
+def customer_delete(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    meter = customer.meter_number
+    customer.user.delete()
+    customer.delete()
+    messages.success(request, f'Cliente {meter} removido.')
+    return redirect('dashboard:customer_list')
+
+
+@login_required
+@user_passes_test(_admin_or_operator)
+def invoice_list_admin(request):
+    q = request.GET.get('q', '')
+    status_filter = request.GET.get('status', '')
+    invoices = Invoice.objects.select_related('customer__user').all()
+    if q:
+        invoices = invoices.filter(
+            Q(invoice_number__icontains=q) |
+            Q(customer__meter_number__icontains=q) |
+            Q(customer__user__username__icontains=q)
+        )
+    if status_filter:
+        invoices = invoices.filter(status=status_filter)
+    return render(request, 'dashboard/invoice_list.html', {
+        'invoices': invoices,
+        'q': q,
+        'status_filter': status_filter,
     })
 
 
@@ -111,16 +186,27 @@ def agent_ticket_detail(request, pk):
             if new_status in dict(Ticket.Status.choices):
                 ticket.status = new_status
                 ticket.save(update_fields=['status'])
-                messages.success(request, f'Status do ticket alterado para {ticket.get_status_display()}.')
+                messages.success(request, f'Status alterado para {ticket.get_status_display()}.')
         elif action == 'change_priority':
             new_priority = request.POST.get('priority', '')
             if new_priority in dict(Ticket.Priority.choices):
                 ticket.priority = new_priority
                 ticket.save(update_fields=['priority'])
-                messages.success(request, f'Prioridade do ticket alterada para {ticket.get_priority_display()}.')
+                messages.success(request, f'Prioridade alterada para {ticket.get_priority_display()}.')
         return redirect('dashboard:agent_ticket_detail', pk=ticket.pk)
     return render(request, 'dashboard/agent_ticket_detail.html', {
         'ticket': ticket,
         'messages': ticket.messages.all(),
         'now': timezone.now(),
     })
+
+
+@login_required
+def settings_view(request):
+    themes = [
+        ('red', 'Vermelho ENDE', '#E30613', 'bi-droplet'),
+        ('black', 'Preto', '#1a1a1a', 'bi-moon'),
+        ('white', 'Branco', '#ffffff', 'bi-sun'),
+        ('purple', 'Roxo Neon', '#a855f7', 'bi-stars'),
+    ]
+    return render(request, 'dashboard/settings.html', {'themes': themes})

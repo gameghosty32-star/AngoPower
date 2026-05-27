@@ -1,0 +1,56 @@
+/* Tema Preto — Dark Mode */
+[data-theme="black"] {
+  --theme-primary: #0d6efd;
+  --theme-primary-hover: #0b5ed7;
+  --theme-primary-rgb: 13, 110, 253;
+  --theme-bg: #0f0f0f;
+  --theme-card-bg: #1a1a1a;
+  --theme-text: #e9ecef;
+  --theme-text-muted: #adb5bd;
+  --theme-navbar-bg: #000000;
+  --theme-navbar-text: rgba(255,255,255,0.9);
+  --theme-footer-bg: #000000;
+  --theme-footer-text: rgba(255,255,255,0.7);
+  --theme-input-bg: #2a2a2a;
+  --theme-input-border: #444;
+  --theme-table-stripe: rgba(255,255,255,0.03);
+}
+
+[data-theme="black"] body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+[data-theme="black"] .card,
+[data-theme="black"] .stat-card,
+[data-theme="black"] .card-header {
+  background-color: var(--theme-card-bg);
+  color: var(--theme-text);
+}
+
+[data-theme="black"] .table {
+  color: var(--theme-text);
+}
+
+[data-theme="black"] .table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: var(--theme-table-stripe);
+}
+
+[data-theme="black"] .form-control,
+[data-theme="black"] .form-select {
+  background-color: var(--theme-input-bg);
+  border-color: var(--theme-input-border);
+  color: var(--theme-text);
+}
+
+[data-theme="black"] .text-muted {
+  color: var(--theme-text-muted) !important;
+}
+
+[data-theme="black"] .bg-light {
+  background-color: #2a2a2a !important;
+}
+
+[data-theme="black"] .table-hover tbody tr:hover {
+  background-color: rgba(255,255,255,0.05);
+}
