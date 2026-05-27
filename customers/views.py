@@ -81,7 +81,7 @@ def request_recharge(request):
             if amount <= 0:
                 raise ValueError('Amount must be positive')
             recharge_balance(customer.pk, amount)
-            messages.success(request, f'Recharge of ${amount:.2f} successful!')
+            messages.success(request, f'Recharge of {amount:.2f}Kz successful!')
             return redirect('customers:balance')
         except (ValueError, TypeError) as e:
             messages.error(request, str(e))
