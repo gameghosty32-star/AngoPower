@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Aprovar Contratos{% endblock %}
+{% block content %}
+<h4 class="page-title"><i class="bi bi-check2-all me-2"></i>Aprovar Contratos Pós-pagos</h4>
+{% if contracts %}
+    {% for contract in contracts %}
+    <div class="card shadow-sm mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-person-badge me-2"></i>{{ contract.customer.meter_number }} - {{ contract.customer.user.get_full_name|default:contract.customer.user.username }}</span>
+            <span class="badge bg-{% if contract.status == 'pending_inspection' %}warning text-dark{% else %}info{% endif %}">
+                {{ contract.get_status_display }}
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Método:</strong> {{ contract.get_activation_method_display }}</p>
+                    <p><strong>Valor mensal:</strong> {{ contract.monthly_amount|floatformat:2 }}Kz</p>
+                    <p><strong>Commercial:</strong> {{ contract.is_commercial|yesno:'Sim,Não' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Electrodomésticos:</strong> {{ contract.appliances|join:', '|default:'N/A' }}</p>
+                    <p><strong>Notas de vistoria:</strong> {{ contract.inspection_notes|default:'N/A' }}</p>
+                </div>
+            </div>
+            <form method="post" class="mt-3 border-top pt-3">
+                {% csrf_token %}
+                <input type="hidden" name="contract_id" value="{{ contract.pk }}">
+                <div class="mb-3">
+                    <label class="form-label">Notas de aprovação/rejeição:</label>
+                    <textarea name="notes" class="form-control" rows="2" placeholder="Observações..."></textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" name="action" value="approve" class="btn btn-success">
+                        <i class="bi bi-check-lg"></i> Aprovar
+                    </button>
+                    <button type="submit" name="action" value="reject" class="btn btn-danger">
+                        <i class="bi bi-x-lg"></i> Rejeitar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-inbox" style="font-size:3rem"></i>
+        <p class="mt-3">Nenhum contrato pendente.</p>
+    </div>
+{% endif %}
+{% endblock %}

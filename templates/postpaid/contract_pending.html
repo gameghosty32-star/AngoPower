@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Contrato Pendente{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm text-center">
+            <div class="card-body py-5">
+                {% if contract.status == 'pending_inspection' %}
+                    <i class="bi bi-clock-history" style="font-size:4rem;color:#ffc107"></i>
+                    <h4 class="mt-3">Aguardando Vistoria</h4>
+                    <p class="text-muted">O seu pedido de vistoria foi recebido. Um técnico da ENDE entrará em contacto consigo para agendar a visita.</p>
+                {% elif contract.status == 'pending_approval' %}
+                    <i class="bi bi-hourglass-split" style="font-size:4rem;color:#0d6efd"></i>
+                    <h4 class="mt-3">Aguardando Aprovação</h4>
+                    <p class="text-muted">O seu contrato foi submetido e está a aguardar aprovação pela ENDE.</p>
+                {% elif contract.status == 'rejected' %}
+                    <i class="bi bi-x-circle" style="font-size:4rem;color:#dc3545"></i>
+                    <h4 class="mt-3">Contrato Rejeitado</h4>
+                    <p class="text-muted">{{ contract.admin_approval_notes|default:'O seu contrato foi rejeitado. Entre em contacto com o suporte para mais informações.' }}</p>
+                    <a href="{% url 'postpaid:activate' %}" class="btn btn-primary mt-3">Tentar novamente</a>
+                {% else %}
+                    <i class="bi bi-check-circle" style="font-size:4rem;color:#198754"></i>
+                    <h4 class="mt-3">Contrato Activo!</h4>
+                    <p class="text-muted">O seu contrato foi aprovado. Já pode aceder ao dashboard.</p>
+                    <a href="{% url 'postpaid:dashboard' %}" class="btn btn-primary mt-3">Ir para o Dashboard</a>
+                {% endif %}
+                <hr>
+                <div class="text-start">
+                    <p><strong>Método de activação:</strong> {{ contract.get_activation_method_display }}</p>
+                    <p><strong>Valor mensal:</strong> {{ contract.monthly_amount|floatformat:2 }}Kz</p>
+                    <p><strong>Data do pedido:</strong> {{ contract.created_at|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

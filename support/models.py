@@ -6,14 +6,25 @@ from customers.models import Customer
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(blank=True, default='')
+    icon = models.CharField(max_length=50, blank=True, default='bi-question-circle')
+    sla_hours = models.PositiveIntegerField(default=48)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            from django.utils.text import slugify
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
 
 class Ticket(models.Model):
@@ -48,6 +59,7 @@ class Ticket(models.Model):
         blank=True,
         related_name='tickets',
     )
+    protocol = models.CharField(max_length=20, unique=True, blank=True)
     subject = models.CharField(max_length=200)
     description = models.TextField()
     priority = models.CharField(
@@ -62,8 +74,15 @@ class Ticket(models.Model):
         default=Status.OPEN,
         db_index=True,
     )
+    sla_deadline = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.protocol:
+            import uuid
+            self.protocol = f"TKT-{uuid.uuid4().hex[:8].upper()}"
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Ticket'

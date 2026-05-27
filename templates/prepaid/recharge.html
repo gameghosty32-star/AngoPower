@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Recarregar{% endblock %}
+{% block content %}
+<h4 class="page-title"><i class="bi bi-plus-circle me-2"></i>Recarregar Saldo</h4>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-wallet2" style="font-size:2.5rem;color:#dc3545"></i>
+                    <p class="mt-2 mb-0">Saldo atual: <strong class="fs-5">{{ customer.current_balance|floatformat:2 }}Kz</strong></p>
+                </div>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="amount" class="form-label">Valor da recarga (Kz)</label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">Kz</span>
+                            <input type="number" id="amount" name="amount" step="0.01" min="0.01" required
+                                   class="form-control" placeholder="0.00">
+                            <div class="invalid-feedback">Informe um valor positivo.</div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Confirmar Recarga
+                        </button>
+                        <a href="{% url 'prepaid:dashboard' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

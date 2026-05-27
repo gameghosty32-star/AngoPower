@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-ao">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { margin: 2cm; size: A4; }
+  body { font-family: Arial, sans-serif; font-size: 12pt; color: #333; line-height: 1.6; }
+  .header { text-align: center; border-bottom: 3px solid #0d6efd; padding-bottom: 1rem; margin-bottom: 2rem; }
+  .header h1 { color: #0d6efd; margin: 0; font-size: 24pt; }
+  .header p { color: #666; margin: 0; }
+  .info-table { width: 100%; margin-bottom: 2rem; }
+  .info-table td { padding: 0.25rem 0; }
+  .info-table td:last-child { text-align: right; font-weight: bold; }
+  .amount-box { text-align: center; border: 2px solid #0d6efd; border-radius: 8px; padding: 1.5rem; margin: 2rem 0; background: #f0f6ff; }
+  .amount-box .label { font-size: 10pt; color: #666; }
+  .amount-box .value { font-size: 28pt; font-weight: bold; color: #0d6efd; }
+  .footer { margin-top: 3rem; font-size: 9pt; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 1rem; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>ENDE Platform</h1>
+  <p>Recibo de Recarga</p>
+</div>
+
+<table class="info-table">
+  <tr><td>Cliente</td><td>{{ customer.user.get_full_name|default:customer.user.username }}</td></tr>
+  <tr><td>Nº do Medidor</td><td>{{ customer.meter_number }}</td></tr>
+  <tr><td>Transacção</td><td>{{ transaction_id }}</td></tr>
+  <tr><td>Valor Recarregado</td><td>{{ recharge_amount|floatformat:2 }} Kz</td></tr>
+  <tr><td>Saldo Actual</td><td>{{ customer.current_balance|floatformat:2 }} Kz</td></tr>
+</table>
+
+<div class="amount-box">
+  <div class="label">Valor Recarregado</div>
+  <div class="value">{{ recharge_amount|floatformat:2 }} Kz</div>
+</div>
+
+<div class="footer">
+  <p>ENDE Platform - Angola | Recarga efectuada com sucesso</p>
+</div>
+</body>
+</html>

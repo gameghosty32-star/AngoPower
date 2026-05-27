@@ -1,0 +1,46 @@
+[
+  {
+    "model": "payment_gateways.PaymentGateway",
+    "pk": 1,
+    "fields": {
+      "name": "Multicaixa Express",
+      "code": "multicaixa_express",
+      "is_active": true,
+      "logo": "img/gateways/multicaixa_express.png",
+      "description": "Pagamento via Multicaixa Express - transferência instantânea a partir de qualquer caixa Multicaixa"
+    }
+  },
+  {
+    "model": "payment_gateways.PaymentGateway",
+    "pk": 2,
+    "fields": {
+      "name": "Paypay",
+      "code": "paypay",
+      "is_active": true,
+      "logo": "img/gateways/paypay.png",
+      "description": "Pagamento via Paypay - carteira digital angolana com pagamentos móveis"
+    }
+  },
+  {
+    "model": "payment_gateways.PaymentGateway",
+    "pk": 3,
+    "fields": {
+      "name": "Unitel Money",
+      "code": "unitel_money",
+      "is_active": true,
+      "logo": "img/gateways/unitel_money.png",
+      "description": "Pagamento via Unitel Money - dinheiro móvel da Unitel, disponível em todo o país"
+    }
+  },
+  {
+    "model": "payment_gateways.PaymentGateway",
+    "pk": 4,
+    "fields": {
+      "name": "Afrimoney",
+      "code": "afrimoney",
+      "is_active": true,
+      "logo": "img/gateways/afrimoney.png",
+      "description": "Pagamento via Afrimoney - serviço de dinheiro móvel da Africell"
+    }
+  }
+]

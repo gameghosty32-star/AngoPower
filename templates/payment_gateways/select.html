@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Seleccionar Pagamento{% endblock %}
+{% block extra_head %}
+<style>
+.gateway-option { cursor: pointer; border: 2px solid #dee2e6; border-radius: 0.75rem; padding: 1rem; transition: all 0.2s; }
+.gateway-option:hover { border-color: #dc3545; background: #fff5f5; }
+.gateway-option.selected { border-color: #dc3545; background: #fff5f5; }
+.gateway-option input[type="radio"] { display: none; }
+.gateway-option img { max-height: 40px; }
+</style>
+{% endblock %}
+{% block content %}
+<h4 class="page-title"><i class="bi bi-credit-card me-2"></i>Seleccionar Método de Pagamento</h4>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form method="post" id="gatewayForm">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Escolha o gateway:</label>
+                        <div class="row g-3" id="gatewayOptions">
+                            {% for value, label in form.gateway.field.choices %}
+                            <div class="col-6">
+                                <label class="gateway-option d-block text-center">
+                                    <input type="radio" name="gateway" value="{{ value }}"{% if form.gateway.value == value %} checked{% endif %}>
+                                    <div class="fw-bold">{{ label }}</div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.gateway.errors %}
+                            <div class="text-danger small mt-1">{{ form.gateway.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-4">
+                        <label for="{{ form.phone.id_for_label }}" class="form-label">{{ form.phone.label }}</label>
+                        {{ form.phone }}
+                        <div class="form-text">Opcional. Usado para confirmar a transacção no gateway.</div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-arrow-right-circle"></i> Continuar
+                        </button>
+                        <a href="{% url 'customers:dashboard' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+document.querySelectorAll('.gateway-option').forEach(function(el) {
+    el.addEventListener('click', function() {
+        document.querySelectorAll('.gateway-option').forEach(function(o) { o.classList.remove('selected'); });
+        this.classList.add('selected');
+        this.querySelector('input[type="radio"]').checked = true;
+    });
+});
+</script>
+{% endblock %}

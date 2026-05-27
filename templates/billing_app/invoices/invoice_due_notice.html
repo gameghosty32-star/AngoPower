@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-ao">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { margin: 2cm; size: A4; }
+  body { font-family: Arial, sans-serif; font-size: 12pt; color: #333; line-height: 1.6; }
+  .header { text-align: center; border-bottom: 3px solid #E30613; padding-bottom: 1rem; margin-bottom: 2rem; }
+  .header h1 { color: #E30613; margin: 0; font-size: 24pt; }
+  .header p { color: #666; margin: 0; }
+  .info-table { width: 100%; margin-bottom: 2rem; }
+  .info-table td { padding: 0.25rem 0; }
+  .info-table td:last-child { text-align: right; font-weight: bold; }
+  .amount-box { text-align: center; border: 2px solid #E30613; border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+  .amount-box .label { font-size: 10pt; color: #666; }
+  .amount-box .value { font-size: 28pt; font-weight: bold; color: #E30613; }
+  .footer { margin-top: 3rem; font-size: 9pt; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 1rem; }
+  .warning { background: #fff3f3; border: 1px solid #E30613; border-radius: 8px; padding: 1rem; margin: 1rem 0; text-align: center; }
+  .warning strong { color: #E30613; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>ENDE Platform</h1>
+  <p>Aviso de Vencimento - Fatura</p>
+</div>
+
+<table class="info-table">
+  <tr><td>Cliente</td><td>{{ invoice.customer.user.get_full_name|default:invoice.customer.user.username }}</td></tr>
+  <tr><td>Nº do Medidor</td><td>{{ invoice.customer.meter_number }}</td></tr>
+  <tr><td>Fatura</td><td>{{ invoice.invoice_number }}</td></tr>
+  <tr><td>Data de Emissão</td><td>{{ invoice.issue_date|date:"d/m/Y" }}</td></tr>
+  <tr><td>Data de Vencimento</td><td>{{ invoice.due_date|date:"d/m/Y" }}</td></tr>
+</table>
+
+<div class="warning">
+  <strong>⚠ ATENÇÃO:</strong> Esta fatura encontra-se próxima do vencimento. Efectue o pagamento até à data indicada para evitar o corte do fornecimento.
+</div>
+
+<div class="amount-box">
+  <div class="label">Valor a Pagar</div>
+  <div class="value">{{ invoice.amount|floatformat:2 }} Kz</div>
+</div>
+
+<div class="footer">
+  <p>ENDE Platform - Angola | Para mais informações contacte o suporte</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Sugestão do Sistema{% endblock %}
+{% block extra_head %}
+<style>
+.appliance-item { cursor: pointer; border: 2px solid #dee2e6; border-radius: 0.75rem; padding: 1rem; transition: all 0.2s; }
+.appliance-item:hover { border-color: #dc3545; background: #fff5f5; }
+.appliance-item.selected { border-color: #dc3545; background: #fff5f5; }
+.appliance-item input { display: none; }
+</style>
+{% endblock %}
+{% block content %}
+<h4 class="page-title"><i class="bi bi-cpu me-2"></i>Sugestão do Sistema</h4>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <p class="text-muted">Informe os electrodomésticos que possui para que o sistema calcule o valor mensal sugerido.</p>
+                <form method="post" id="suggestionForm" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{{ form.appliances.label }}</label>
+                        <div class="row g-2" id="applianceOptions">
+                            {% for value, label in form.appliances.field.choices %}
+                            <div class="col-6">
+                                <label class="appliance-item d-block text-center">
+                                    <input type="checkbox" name="appliances" value="{{ value }}" class="appliance-checkbox">
+                                    <div class="fw-bold small">{{ label }}</div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-4 form-check">
+                        {{ form.is_commercial }}
+                        <label class="form-check-label fw-bold" for="{{ form.is_commercial.id_for_label }}">{{ form.is_commercial.label }}</label>
+                    </div>
+                    <div id="suggestedAmount" class="alert alert-info text-center d-none">
+                        <strong>Valor mensal sugerido:</strong> <span id="amountDisplay" class="fs-4">0 Kz</span>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-send"></i> Submeter Contrato
+                        </button>
+                        <a href="{% url 'postpaid:activate' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+const applianceValues = { fridge: 5000, ac: 8000, tv: 2000, microwave: 3000, washing_machine: 4000 };
+function updateAmount() {
+    let total = 0;
+    document.querySelectorAll('.appliance-checkbox:checked').forEach(function(cb) {
+        total += applianceValues[cb.value] || 0;
+    });
+    if (document.getElementById('{{ form.is_commercial.id_for_label }}') && document.getElementById('{{ form.is_commercial.id_for_label }}').checked) {
+        total = Math.round(total * 1.5);
+    }
+    var el = document.getElementById('suggestedAmount');
+    var display = document.getElementById('amountDisplay');
+    if (total > 0) {
+        el.classList.remove('d-none');
+        display.textContent = total.toLocaleString() + ' Kz';
+    } else {
+        el.classList.add('d-none');
+    }
+}
+document.querySelectorAll('.appliance-checkbox').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+        var parent = this.closest('.appliance-item');
+        if (this.checked) { parent.classList.add('selected'); }
+        else { parent.classList.remove('selected'); }
+        updateAmount();
+    });
+});
+document.getElementById('{{ form.is_commercial.id_for_label }}').addEventListener('change', updateAmount);
+</script>
+{% endblock %}

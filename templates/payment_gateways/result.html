@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Resultado do Pagamento{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm text-center">
+            <div class="card-body py-5">
+                {% if success %}
+                    <i class="bi bi-check-circle-fill text-success" style="font-size:4rem"></i>
+                    <h4 class="mt-3 text-success">Pagamento Confirmado!</h4>
+                {% else %}
+                    <i class="bi bi-x-circle-fill text-danger" style="font-size:4rem"></i>
+                    <h4 class="mt-3 text-danger">Pagamento Falhou</h4>
+                {% endif %}
+                <hr>
+                <div class="text-start px-3">
+                    <p><strong>Gateway:</strong> {{ gateway.name }}</p>
+                    <p><strong>Transacção:</strong> <code>{{ transaction.transaction_id }}</code></p>
+                    <p><strong>Valor:</strong> {{ transaction.amount|floatformat:2 }}Kz</p>
+                    <p><strong>Referência:</strong> {{ response.reference }}</p>
+                    <p><strong>Mensagem:</strong> {{ response.message }}</p>
+                </div>
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{% url 'customers:dashboard' %}" class="btn btn-primary">
+                        <i class="bi bi-speedometer2"></i> Voltar ao Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

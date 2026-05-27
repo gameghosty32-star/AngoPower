@@ -24,13 +24,14 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            customer_type = form.cleaned_data.get('customer_type', 'prepaid')
             meter_number = _generate_unique_meter_number(user.username)
             try:
                 Customer.objects.get_or_create(
                     user=user,
                     defaults={
                         'meter_number': meter_number,
-                        'customer_type': 'prepaid',
+                        'customer_type': customer_type,
                     }
                 )
             except IntegrityError:
@@ -39,11 +40,13 @@ def register(request):
                     user=user,
                     defaults={
                         'meter_number': fallback_meter,
-                        'customer_type': 'prepaid',
+                        'customer_type': customer_type,
                     }
                 )
             login(request, user)
             messages.success(request, 'Conta criada com sucesso!')
+            if customer_type == 'postpaid':
+                return redirect('postpaid:activate')
             return redirect('customers:dashboard')
     else:
         form = CustomUserCreationForm()

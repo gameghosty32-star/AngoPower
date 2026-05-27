@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Pós-pago{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="page-title mb-0"><i class="bi bi-speedometer2 me-2"></i>Dashboard Pós-pago</h4>
+    <span class="badge bg-primary fs-6">{{ customer.get_customer_type_display }}</span>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-file-text"></i></div>
+            <div class="value">{{ invoices|length }}</div>
+            <div class="label">Faturas Pendentes</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-exclamation-triangle"></i></div>
+            <div class="value">{{ total_debt|floatformat:0 }}Kz</div>
+            <div class="label">Dívida Total</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-upc-scan"></i></div>
+            <div class="value">{{ customer.meter_number }}</div>
+            <div class="label">Nº do Medidor</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-person-badge"></i></div>
+            <div class="value">Pós-pago</div>
+            <div class="label">Tipo de Conta</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-lightning me-2"></i>Ações Rápidas</div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'postpaid:invoice_list' %}" class="btn btn-outline-primary btn-action text-start">
+                        <i class="bi bi-file-text me-2"></i>Minhas Faturas
+                    </a>
+                    <a href="{% url 'postpaid:consumption' %}" class="btn btn-outline-info btn-action text-start">
+                        <i class="bi bi-graph-up me-2"></i>Consumo
+                    </a>
+                    <a href="{% url 'support:ticket_list' %}" class="btn btn-outline-warning btn-action text-start">
+                        <i class="bi bi-ticket me-2"></i>Suporte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-clock-history me-2"></i>Faturas Pendentes</span>
+                <a href="{% url 'postpaid:invoice_list' %}" class="btn btn-sm btn-outline-primary">Ver todas</a>
+            </div>
+            <div class="card-body p-0">
+                {% if invoices %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Fatura</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                    <th>Vencimento</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for inv in invoices %}
+                                <tr>
+                                    <td><strong>{{ inv.invoice_number }}</strong></td>
+                                    <td class="fw-bold">{{ inv.amount|floatformat:2 }}Kz</td>
+                                    <td>
+                                        {% if inv.status == 'overdue' %}
+                                            <span class="badge bg-danger">Vencido</span>
+                                        {% elif inv.status == 'issued' %}
+                                            <span class="badge bg-primary">Emitida</span>
+                                        {% elif inv.status == 'partially_paid' %}
+                                            <span class="badge bg-warning text-dark">Parcial</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-muted">{{ inv.due_date|date:"d/m/Y" }}</td>
+                                    <td class="text-end">
+                                        <a href="{% url 'postpaid:invoice_detail' inv.pk %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-check-circle" style="font-size:2rem"></i>
+                        <p class="mt-2 mb-0">Nenhuma fatura pendente.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

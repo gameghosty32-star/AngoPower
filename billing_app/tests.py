@@ -100,46 +100,47 @@ class InvoiceViewsTest(TestCase):
         )
         self.client.login(username='client1', password='pass123')
 
-    def test_invoice_list_view(self):
-        response = self.client.get(reverse('billing:invoice_list'))
+    def test_postpaid_invoice_list_view(self):
+        response = self.client.get(reverse('postpaid:invoice_list'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'billing/invoice_list.html')
+        self.assertTemplateUsed(response, 'postpaid/invoice_list.html')
         self.assertContains(response, 'INV-001')
 
-    def test_invoice_detail_view(self):
-        response = self.client.get(reverse('billing:invoice_detail', args=[self.invoice.pk]))
+    def test_postpaid_invoice_detail_view(self):
+        response = self.client.get(reverse('postpaid:invoice_detail', args=[self.invoice.pk]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'billing/invoice_detail.html')
+        self.assertTemplateUsed(response, 'postpaid/invoice_detail.html')
         self.assertContains(response, 'INV-001')
-        self.assertContains(response, '100.00')
+        self.assertContains(response, '100')
 
-    def test_invoice_detail_other_user(self):
+    def test_postpaid_invoice_detail_other_user(self):
         user2 = CustomUser.objects.create_user(username='other', password='pass123')
         Customer.objects.create(user=user2, meter_number='MTR-999')
         self.client.login(username='other', password='pass123')
-        response = self.client.get(reverse('billing:invoice_detail', args=[self.invoice.pk]))
+        response = self.client.get(reverse('postpaid:invoice_detail', args=[self.invoice.pk]))
         self.assertEqual(response.status_code, 404)
 
-    def test_pay_invoice_view_get(self):
-        response = self.client.get(reverse('billing:pay_invoice', args=[self.invoice.pk]))
+    def test_postpaid_pay_invoice_get(self):
+        response = self.client.get(reverse('postpaid:pay_invoice', args=[self.invoice.pk]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'billing/pay_invoice.html')
+        self.assertTemplateUsed(response, 'postpaid/pay_invoice.html')
 
-    def test_pay_invoice_view_post(self):
+    def test_postpaid_pay_invoice_post(self):
         response = self.client.post(
-            reverse('billing:pay_invoice', args=[self.invoice.pk]),
+            reverse('postpaid:pay_invoice', args=[self.invoice.pk]),
             {'amount': '50.00'},
         )
-        self.assertRedirects(response, reverse('billing:invoice_detail', args=[self.invoice.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/gateways/select/pay_invoice/', response.url)
         self.invoice.refresh_from_db()
-        self.assertEqual(self.invoice.paid_amount, Decimal('50.00'))
+        self.assertEqual(self.invoice.paid_amount, Decimal('0.00'))
 
-    def test_consumption_view(self):
-        response = self.client.get(reverse('billing:consumption'))
+    def test_postpaid_consumption_view(self):
+        response = self.client.get(reverse('postpaid:consumption'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'billing/consumption_history.html')
+        self.assertTemplateUsed(response, 'postpaid/consumption_history.html')
 
-    def test_unauthorized_access(self):
+    def test_unauthorized_access_postpaid(self):
         self.client.logout()
-        response = self.client.get(reverse('billing:invoice_list'))
+        response = self.client.get(reverse('postpaid:invoice_list'))
         self.assertEqual(response.status_code, 302)

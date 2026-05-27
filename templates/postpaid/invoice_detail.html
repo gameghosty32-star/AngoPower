@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Fatura {{ invoice.invoice_number }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="page-title mb-0"><i class="bi bi-file-text me-2"></i>Fatura {{ invoice.invoice_number }}</h4>
+    <a href="{% url 'postpaid:invoice_list' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Todas as Faturas
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title mb-0">Detalhes</h5>
+                    {% if invoice.status == 'paid' %}
+                        <span class="badge bg-success fs-6">Pago</span>
+                    {% elif invoice.status == 'overdue' %}
+                        <span class="badge bg-danger fs-6">Vencido</span>
+                    {% elif invoice.status == 'issued' %}
+                        <span class="badge bg-primary fs-6">Emitida</span>
+                    {% elif invoice.status == 'partially_paid' %}
+                        <span class="badge bg-warning text-dark fs-6">Parcial</span>
+                    {% else %}
+                        <span class="badge bg-secondary fs-6">{{ invoice.get_status_display }}</span>
+                    {% endif %}
+                </div>
+                <table class="table table-borderless">
+                    <tr>
+                        <td class="text-muted">Valor total</td>
+                        <td class="fw-bold text-end fs-5">{{ invoice.amount|floatformat:2 }}Kz</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Valor pago</td>
+                        <td class="text-end fw-bold text-success">{{ invoice.paid_amount|floatformat:2 }}Kz</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Saldo restante</td>
+                        <td class="text-end fw-bold text-danger">
+                            {{ remaining|floatformat:2 }}Kz
+                        </td>
+                    </tr>
+                </table>
+                <hr>
+                <p><strong>Emissão:</strong> {{ invoice.issue_date|date:"d/m/Y" }}</p>
+                <p><strong>Vencimento:</strong> {{ invoice.due_date|date:"d/m/Y" }}</p>
+                <p><strong>Descrição:</strong> {{ invoice.description|default:'-' }}</p>
+                <div class="d-flex gap-2 mt-3">
+                    <a href="{% url 'billing:invoice_pdf' invoice.pk %}" class="btn btn-outline-primary flex-fill" target="_blank">
+                        <i class="bi bi-download"></i> Baixar PDF
+                    </a>
+                    <a href="mailto:{{ customer.user.email }}?subject=Fatura {{ invoice.invoice_number }}&body=Segue em anexo a fatura {{ invoice.invoice_number }}" class="btn btn-outline-secondary flex-fill">
+                        <i class="bi bi-envelope"></i> Enviar Email
+                    </a>
+                </div>
+                {% if invoice.status != 'paid' %}
+                    <a href="{% url 'postpaid:pay_invoice' invoice.pk %}" class="btn btn-primary w-100 mt-2">
+                        <i class="bi bi-credit-card"></i> Pagar Fatura
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header"><i class="bi bi-clock-history me-2"></i>Transações Relacionadas</div>
+            <div class="card-body p-0">
+                {% if transactions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for txn in transactions %}
+                                <tr>
+                                    <td><code>{{ txn.transaction_id|truncatechars:12 }}</code></td>
+                                    <td class="fw-bold">{{ txn.amount|floatformat:2 }}Kz</td>
+                                    <td>
+                                        {% if txn.status == 'completed' %}
+                                            <span class="badge bg-success">Concluído</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">{{ txn.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-muted">{{ txn.created_at|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-inbox" style="font-size:2rem"></i>
+                        <p class="mt-2 mb-0">Nenhuma transação relacionada.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

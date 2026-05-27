@@ -54,7 +54,8 @@ class RegisterViewTest(TestCase):
             'password2': 'ComplexPass123!',
         }
         response = self.client.post(reverse('register'), data)
-        self.assertRedirects(response, reverse('customers:dashboard'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('customers:dashboard'))
         self.assertTrue(CustomUser.objects.filter(username='newuser').exists())
         self.assertTrue(Customer.objects.filter(user__username='newuser').exists())
 

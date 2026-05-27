@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: [{% for txn in transactions %}'{{ txn.created_at|date:"M" }}'{% if not forloop.last %},{% endif %}{% endfor %}],
                 datasets: [{
-                    label: 'Consumo ($)',
+                    label: 'Consumo (Kz)',
                     data: [{% for txn in transactions %}{{ txn.amount }}{% if not forloop.last %},{% endif %}{% endfor %}],
                     backgroundColor: 'rgba(220, 53, 69, 0.6)',
                     borderColor: '#dc3545',
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        ticks: { callback: function(v) { return '$' + v; } }
+                        ticks: { callback: function(v) { return v + 'Kz'; } }
                     }
                 }
             }

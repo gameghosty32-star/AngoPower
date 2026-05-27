@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Saldo{% endblock %}
+{% block content %}
+<h4 class="page-title"><i class="bi bi-cash-coin me-2"></i>Saldo da Conta</h4>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm text-center">
+            <div class="card-body py-5">
+                <i class="bi bi-wallet2" style="font-size:3rem;color:#212529"></i>
+                <div class="display-4 fw-bold my-3" style="color:#212529">{{ customer.current_balance|floatformat:2 }}Kz</div>
+                <p class="text-muted mb-1">Saldo disponível</p>
+                <hr>
+                <div class="row text-start mb-3">
+                    <div class="col-6"><small class="text-muted">Medidor</small><br><strong>{{ customer.meter_number }}</strong></div>
+                    <div class="col-6"><small class="text-muted">Tipo</small><br><strong>{{ customer.get_customer_type_display }}</strong></div>
+                </div>
+                <a href="{% url 'prepaid:recharge' %}" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-plus-circle"></i> Recarregar Agora
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Pagar Fatura{% endblock %}
+{% block content %}
+<h4 class="page-title"><i class="bi bi-credit-card me-2"></i>Pagar Fatura {{ invoice.invoice_number }}</h4>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <div class="bg-light rounded p-3 mb-4">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <small class="text-muted d-block">Total</small>
+                            <strong class="fs-5">{{ invoice.amount|floatformat:2 }}Kz</strong>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-muted d-block">Pago</small>
+                            <strong class="fs-5 text-success">{{ invoice.paid_amount|floatformat:2 }}Kz</strong>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-muted d-block">Restante</small>
+                            <strong class="fs-5 text-danger">{{ remaining|floatformat:2 }}Kz</strong>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="amount" class="form-label">Valor do pagamento (Kz)</label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">Kz</span>
+                            <input type="number" id="amount" name="amount" step="0.01" min="0.01"
+                                   max="{{ remaining }}" required
+                                   class="form-control" placeholder="0.00">
+                            <div class="invalid-feedback">Informe um valor entre 0.01Kz e {{ remaining|floatformat:2 }}Kz.</div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Confirmar Pagamento
+                        </button>
+                        <a href="{% url 'postpaid:invoice_detail' invoice.pk %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

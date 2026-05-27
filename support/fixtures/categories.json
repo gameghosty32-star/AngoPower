@@ -1,0 +1,8 @@
+[
+  {"model": "support.Category", "pk": 1, "fields": {"name": "Avaria Técnica", "slug": "avaria-tecnica", "description": "Problemas técnicos com o fornecimento de energia, medidor ou instalação", "icon": "bi-tools", "sla_hours": 4, "is_active": true}},
+  {"model": "support.Category", "pk": 2, "fields": {"name": "Problema de Faturação", "slug": "problema-de-faturacao", "description": "Problemas com faturas, valores cobrados ou prazos de pagamento", "icon": "bi-file-text", "sla_hours": 24, "is_active": true}},
+  {"model": "support.Category", "pk": 3, "fields": {"name": "Recarga Não Creditada", "slug": "recarga-nao-creditada", "description": "Recarga efectuada mas não reflectida no saldo da conta", "icon": "bi-cash", "sla_hours": 2, "is_active": true}},
+  {"model": "support.Category", "pk": 4, "fields": {"name": "Pedido de Ligação", "slug": "pedido-de-ligacao", "description": "Solicitação de nova ligação de energia eléctrica", "icon": "bi-plug", "sla_hours": 72, "is_active": true}},
+  {"model": "support.Category", "pk": 5, "fields": {"name": "Denúncia/Fraude", "slug": "denuncia-fraude", "description": "Denúncias de fraude, furto de energia ou uso indevido", "icon": "bi-shield-exclamation", "sla_hours": 48, "is_active": true}},
+  {"model": "support.Category", "pk": 6, "fields": {"name": "Outro", "slug": "outro", "description": "Outros assuntos não especificados nas categorias acima", "icon": "bi-question-circle", "sla_hours": 48, "is_active": true}}
+]

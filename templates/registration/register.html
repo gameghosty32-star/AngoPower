@@ -13,23 +13,40 @@
                 <form method="post" novalidate>
                     {% csrf_token %}
                     {% for field in form %}
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-{% if field.name == 'username' %}person{% elif field.name == 'email' %}envelope{% elif 'password' in field.name %}lock{% else %}question-circle{% endif %}"></i>
-                                </span>
-                                {{ field }}
-                            </div>
-                            {% if field.help_text %}
-                                <div class="form-text">{{ field.help_text }}</div>
-                            {% endif %}
-                            {% if field.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in field.errors %}{{ error }}{% endfor %}
+                        {% if field.name == 'customer_type' %}
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">{{ field.label }}</label>
+                                <div class="d-flex gap-3">
+                                    {% for radio in field %}
+                                        <div class="form-check form-check-inline">
+                                            {{ radio.tag }}
+                                            <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                            {% endif %}
-                        </div>
+                                {% if field.errors %}
+                                    <div class="invalid-feedback d-block">{% for error in field.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-{% if field.name == 'username' %}person{% elif field.name == 'email' %}envelope{% elif 'password' in field.name %}lock{% else %}question-circle{% endif %}"></i>
+                                    </span>
+                                    {{ field }}
+                                </div>
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in field.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
                     {% endfor %}
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary btn-lg">

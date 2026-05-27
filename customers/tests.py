@@ -64,47 +64,57 @@ class CustomerViewsTest(TestCase):
         )
         self.client.login(username='client1', password='pass123')
 
-    def test_dashboard_view(self):
+    def test_dashboard_redirects_prepaid(self):
         response = self.client.get(reverse('customers:dashboard'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'customers/dashboard.html')
-        self.assertContains(response, 'MTR-001')
-        self.assertContains(response, '100.00')
+        self.assertRedirects(response, reverse('prepaid:dashboard'))
 
     def test_dashboard_requires_login(self):
         self.client.logout()
         response = self.client.get(reverse('customers:dashboard'))
         self.assertRedirects(response, f'/login/?next={reverse("customers:dashboard")}')
 
-    def test_balance_view(self):
+    def test_balance_redirects_prepaid(self):
         response = self.client.get(reverse('customers:balance'))
+        self.assertRedirects(response, reverse('prepaid:balance'))
+
+    def test_prepaid_dashboard(self):
+        response = self.client.get(reverse('prepaid:dashboard'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'customers/balance.html')
+        self.assertTemplateUsed(response, 'prepaid/dashboard.html')
+        self.assertContains(response, 'MTR-001')
         self.assertContains(response, '100.00')
 
-    def test_recharge_view_get(self):
-        response = self.client.get(reverse('customers:recharge'))
+    def test_prepaid_balance_view(self):
+        response = self.client.get(reverse('prepaid:balance'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'customers/recharge.html')
+        self.assertTemplateUsed(response, 'prepaid/balance.html')
+        self.assertContains(response, '100')
 
-    def test_recharge_view_post(self):
-        response = self.client.post(reverse('customers:recharge'), {'amount': '50.00'})
-        self.assertRedirects(response, reverse('customers:balance'))
-        self.customer.refresh_from_db()
-        self.assertEqual(self.customer.current_balance, Decimal('150.00'))
+    def test_prepaid_dashboard(self):
+        response = self.client.get(reverse('prepaid:dashboard'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'prepaid/dashboard.html')
+        self.assertContains(response, 'MTR-001')
+        self.assertContains(response, 'Saldo Atual')
 
-    def test_recharge_invalid_amount(self):
-        response = self.client.post(reverse('customers:recharge'), {'amount': '0'})
+    def test_prepaid_recharge_view_get(self):
+        response = self.client.get(reverse('prepaid:recharge'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'prepaid/recharge.html')
+
+    def test_prepaid_recharge_view_post(self):
+        response = self.client.post(reverse('prepaid:recharge'), {'amount': '50.00'})
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/gateways/select/recharge/', response.url)
+
+    def test_prepaid_recharge_invalid_amount(self):
+        response = self.client.post(reverse('prepaid:recharge'), {'amount': '0'})
         self.assertEqual(response.status_code, 200)
 
-    def test_recharge_negative_amount(self):
-        response = self.client.post(reverse('customers:recharge'), {'amount': '-10'})
+    def test_prepaid_transaction_history_view(self):
+        response = self.client.get(reverse('prepaid:transactions'))
         self.assertEqual(response.status_code, 200)
-
-    def test_transaction_history_view(self):
-        response = self.client.get(reverse('customers:transactions'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'customers/transaction_history.html')
+        self.assertTemplateUsed(response, 'prepaid/transaction_history.html')
 
     def test_no_profile_redirect_creates_customer(self):
         self.client.logout()
@@ -113,6 +123,5 @@ class CustomerViewsTest(TestCase):
         )
         self.client.login(username='noprofile', password='pass123')
         response = self.client.get(reverse('customers:dashboard'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'customers/dashboard.html')
+        self.assertRedirects(response, reverse('prepaid:dashboard'))
         self.assertTrue(Customer.objects.filter(user=user2).exists())

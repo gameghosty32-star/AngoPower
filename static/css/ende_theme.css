@@ -1,0 +1,204 @@
+:root {
+  --ende-red: #E30613;
+  --ende-red-hover: #c40510;
+  --ende-black: #1a1a1a;
+  --ende-white: #ffffff;
+  --ende-gray: #f5f5f5;
+  --ende-gray-dark: #6c757d;
+  --bs-primary: var(--ende-red);
+  --bs-primary-rgb: 227, 6, 19;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes rippleEffect {
+  to { transform: scale(4); opacity: 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.card, .stat-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.page-transition {
+  animation: slideIn 0.4s ease-out;
+}
+
+.card:hover, .stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
+}
+
+.btn {
+  min-height: 48px;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--ende-red);
+  border-color: var(--ende-red);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--ende-red-hover);
+  border-color: var(--ende-red-hover);
+}
+
+.btn-outline-primary {
+  color: var(--ende-red);
+  border-color: var(--ende-red);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--ende-red);
+  border-color: var(--ende-red);
+  color: var(--ende-white);
+}
+
+.btn-ende-red {
+  background-color: var(--ende-red);
+  border-color: var(--ende-red);
+  color: var(--ende-white);
+}
+
+.btn-ende-red:hover {
+  background-color: var(--ende-red-hover);
+  color: var(--ende-white);
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  transform: scale(0);
+  animation: rippleEffect 0.6s linear;
+  pointer-events: none;
+}
+
+.navbar {
+  background: var(--ende-black) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.navbar .nav-link {
+  color: rgba(255,255,255,0.85) !important;
+  transition: color 0.2s;
+}
+
+.navbar .nav-link:hover {
+  color: var(--ende-red) !important;
+}
+
+.navbar-brand {
+  color: var(--ende-white) !important;
+  font-weight: 800;
+}
+
+.navbar-toggler {
+  border-color: rgba(255,255,255,0.3);
+  padding: 0.5rem 0.75rem;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+.form-control, .form-select {
+  min-height: 48px;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--ende-red);
+  box-shadow: 0 0 0 0.2rem rgba(227, 6, 19, 0.15);
+}
+
+label.form-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+}
+
+.input-group-text {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.table {
+  font-size: 0.875rem;
+}
+
+.table-responsive {
+  border-radius: 0.5rem;
+}
+
+.card-header {
+  background: white;
+  border-bottom: 2px solid var(--ende-red);
+  font-weight: 700;
+}
+
+.page-title {
+  font-weight: 800;
+  border-bottom: 3px solid var(--ende-red);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.stat-card .value {
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.stat-card .label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.notification-badge {
+  background: var(--ende-red);
+}
+
+.ende-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--ende-gray);
+  border-top-color: var(--ende-red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 2rem auto;
+}
+
+@media (max-width: 768px) {
+  .stat-card .value { font-size: 1.35rem; }
+  .btn { min-height: 44px; font-size: 0.9rem; }
+  .card-body { padding: 1rem; }
+  h4.page-title { font-size: 1.25rem; }
+  .navbar .nav-link { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .sobre-link { border-left: none !important; padding-left: 0 !important; margin-left: 0 !important; }
+}

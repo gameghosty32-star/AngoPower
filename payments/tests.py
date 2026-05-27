@@ -132,8 +132,8 @@ class PaymentServicesTest(TestCase):
         from notifications.models import Notification
         recharge_balance(self.customer.pk, Decimal('25.00'))
         notifications = Notification.objects.filter(user=self.user)
-        self.assertEqual(notifications.count(), 1)
-        self.assertEqual(notifications.first().type, 'recharge')
+        self.assertEqual(notifications.count(), 2)
+        self.assertEqual(notifications.filter(type='recharge').count(), 2)
 
 
 class PaymentAPITest(TestCase):

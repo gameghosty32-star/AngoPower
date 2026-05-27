@@ -39,7 +39,19 @@
                     {% endif %}
                 </div>
                 <p><span class="text-muted">Categoria:</span><br><strong>{{ ticket.category.name|default:'Geral' }}</strong></p>
+                <p><span class="text-muted">Protocolo:</span><br><strong><code>{{ ticket.protocol }}</code></strong></p>
                 <p><span class="text-muted">Criado em:</span><br><strong>{{ ticket.created_at|date:"d/m/Y H:i" }}</strong></p>
+                <p><span class="text-muted">SLA:</span><br>
+                    {% if ticket.sla_deadline %}
+                        {% if sla_ok %}
+                            <strong class="text-success">{{ ticket.sla_deadline|timeuntil }} restantes</strong>
+                        {% else %}
+                            <strong class="text-danger">SLA Expirado</strong>
+                        {% endif %}
+                    {% else %}
+                        <strong class="text-muted">N/A</strong>
+                    {% endif %}
+                </p>
                 <hr>
                 <h6>Descrição</h6>
                 <p class="bg-light p-3 rounded">{{ ticket.description }}</p>

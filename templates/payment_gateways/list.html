@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Métodos de Pagamento{% endblock %}
+{% block content %}
+<h4 class="page-title"><i class="bi bi-credit-card me-2"></i>Métodos de Pagamento</h4>
+<div class="row g-4">
+    {% for gateway in gateways %}
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-sm h-100 text-center">
+            <div class="card-body p-4">
+                <img src="{% static gateway.logo %}" alt="{{ gateway.name }}" class="img-fluid mb-3" style="max-height:60px">
+                <h5 class="card-title">{{ gateway.name }}</h5>
+                <p class="card-text text-muted small">{{ gateway.description }}</p>
+                <span class="badge bg-success">Activo</span>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 text-muted">
+        <i class="bi bi-credit-card" style="font-size:3rem"></i>
+        <p class="mt-3">Nenhum método de pagamento disponível.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
