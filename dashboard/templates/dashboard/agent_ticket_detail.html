@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}Ticket {{ ticket.protocol }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="page-title mb-0">
+        <i class="bi bi-ticket me-2"></i>Ticket {{ ticket.protocol }}
+    </h4>
+    <a href="{% url 'dashboard:agent' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-info-circle me-2"></i>{{ ticket.subject }}</span>
+                <small class="text-muted">Criado em {{ ticket.created_at|date:"d/m/Y H:i" }}</small>
+            </div>
+            <div class="card-body">
+                <p>{{ ticket.description }}</p>
+                <hr>
+                <p class="mb-1"><strong>Cliente:</strong> {{ ticket.customer.user.username }} ({{ ticket.customer.meter_number }})</p>
+                <p class="mb-1"><strong>Protocolo:</strong> <code>{{ ticket.protocol }}</code></p>
+                <p class="mb-1"><strong>Prioridade:</strong>
+                    {% if ticket.priority == 'urgent' %}
+                        <span class="badge bg-danger">Urgente</span>
+                    {% elif ticket.priority == 'high' %}
+                        <span class="badge bg-warning text-dark">Alta</span>
+                    {% elif ticket.priority == 'medium' %}
+                        <span class="badge bg-info">Média</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Baixa</span>
+                    {% endif %}
+                </p>
+                <p class="mb-1"><strong>Status:</strong>
+                    {% if ticket.status == 'open' %}
+                        <span class="badge bg-danger">Aberto</span>
+                    {% elif ticket.status == 'in_progress' %}
+                        <span class="badge bg-warning text-dark">Em Andamento</span>
+                    {% elif ticket.status == 'resolved' %}
+                        <span class="badge bg-info">Resolvido</span>
+                    {% elif ticket.status == 'closed' %}
+                        <span class="badge bg-secondary">Fechado</span>
+                    {% endif %}
+                </p>
+                <p class="mb-1"><strong>Categoria:</strong> {{ ticket.category.name|default:'-' }}</p>
+                <p class="mb-0"><strong>SLA:</strong>
+                    {% if ticket.sla_deadline %}
+                        {% if ticket.sla_deadline < now %}
+                            <span class="badge bg-danger">Expirado</span>
+                        {% else %}
+                            <span class="badge bg-success">{{ ticket.sla_deadline|timeuntil }} restante</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge bg-secondary">N/A</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-3">
+            <div class="card-header"><i class="bi bi-chat-dots me-2"></i>Mensagens</div>
+            <div class="card-body p-0">
+                {% for msg in messages %}
+                <div class="p-3 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ msg.author.get_full_name|default:msg.author.username }}</strong>
+                        <small class="text-muted">{{ msg.created_at|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    <p class="mb-0 mt-1">{{ msg.content }}</p>
+                </div>
+                {% empty %}
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-inbox" style="font-size:2rem"></i>
+                    <p class="mt-2 mb-0">Nenhuma mensagem ainda.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header"><i class="bi bi-reply me-2"></i>Responder</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_message">
+                    <div class="mb-3">
+                        <textarea name="content" class="form-control" rows="3" placeholder="Escreva a sua resposta..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Enviar Resposta</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header"><i class="bi bi-pencil-square me-2"></i>Alterar Status</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="change_status">
+                    <div class="mb-3">
+                        <select name="status" class="form-select">
+                            <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>Aberto</option>
+                            <option value="in_progress" {% if ticket.status == 'in_progress' %}selected{% endif %}>Em Andamento</option>
+                            <option value="resolved" {% if ticket.status == 'resolved' %}selected{% endif %}>Resolvido</option>
+                            <option value="closed" {% if ticket.status == 'closed' %}selected{% endif %}>Fechado</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100"><i class="bi bi-arrow-repeat"></i> Alterar</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-header"><i class="bi bi-flag me-2"></i>Alterar Prioridade</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="change_priority">
+                    <div class="mb-3">
+                        <select name="priority" class="form-select">
+                            <option value="urgent" {% if ticket.priority == 'urgent' %}selected{% endif %}>Urgente</option>
+                            <option value="high" {% if ticket.priority == 'high' %}selected{% endif %}>Alta</option>
+                            <option value="medium" {% if ticket.priority == 'medium' %}selected{% endif %}>Média</option>
+                            <option value="low" {% if ticket.priority == 'low' %}selected{% endif %}>Baixa</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-info w-100"><i class="bi bi-flag"></i> Alterar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

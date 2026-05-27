@@ -30,6 +30,7 @@ urlpatterns = [
     path('support/', include('support.urls')),
     path('notifications/', include('notifications.urls')),
     path('gateways/', include('payment_gateways.urls')),
+    path('dashboard/', include('dashboard.urls')),
     path('api/', include('payments.api_urls')),
     path('users/', include('users.urls')),
     path('login/', auth_views.LoginView.as_view(), name='login'),

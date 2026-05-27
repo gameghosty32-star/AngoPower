@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'prepaid',
     'postpaid',
     'payment_gateways',
+    'dashboard',
 ]
 
 MIDDLEWARE = [

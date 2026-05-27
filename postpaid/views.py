@@ -1,10 +1,12 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.http import HttpResponse
 from django.contrib import messages
 
 from customers.models import Customer
 from billing_app.models import Invoice
+from billing_app.invoice_generator import InvoiceGenerator
 from customers.views import _get_customer
 from .models import PostpaidContract
 from .forms import InspectionRequestForm, SystemSuggestionForm
@@ -183,3 +185,12 @@ def consumption_history(request):
         'customer': customer,
         **data,
     })
+
+
+@login_required
+def debt_pdf(request):
+    customer = _get_customer(request.user)
+    invoices = services.get_outstanding_invoices(customer.pk)
+    pdf = InvoiceGenerator.generate_debt_report(customer, invoices)
+    return HttpResponse(pdf.getvalue(), content_type='application/pdf',
+                        headers={'Content-Disposition': f'attachment; filename="divida_{customer.meter_number}.pdf"'})

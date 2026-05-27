@@ -1,14 +1,18 @@
 from urllib.parse import urlencode
+from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.http import HttpResponse
 from django.contrib import messages
 from django.db import transaction as db_transaction
 
 from customers.models import Customer
 from customers.views import _get_customer
+from payments.models import Transaction
 from payments.services import process_payment
+from billing_app.invoice_generator import InvoiceGenerator
 from .models import PaymentGateway
 from .forms import GatewaySelectionForm
 from . import services
@@ -114,3 +118,17 @@ def gateway_list(request):
     return render(request, 'payment_gateways/list.html', {
         'gateways': gateways,
     })
+
+
+@login_required
+def download_receipt(request, transaction_id):
+    customer = _get_customer(request.user)
+    txn = get_object_or_404(Transaction, transaction_id=transaction_id, customer=customer)
+    if txn.invoice:
+        pdf = InvoiceGenerator.generate_payment_receipt(txn.invoice)
+        filename = f'recibo_{txn.invoice.invoice_number}.pdf'
+    else:
+        pdf = InvoiceGenerator.generate_recharge_receipt(customer, float(txn.amount), txn.transaction_id)
+        filename = f'recibo_{txn.transaction_id[:8]}.pdf'
+    return HttpResponse(pdf.getvalue(), content_type='application/pdf',
+                        headers={'Content-Disposition': f'attachment; filename="{filename}"'})

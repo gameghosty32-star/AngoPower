@@ -124,6 +124,79 @@ class InvoiceGenerator:
         )
 
     @staticmethod
+    def generate_debt_report(customer, invoices):
+        total_debt = sum(float(inv.amount - (inv.paid_amount or 0)) for inv in invoices)
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4,
+                                topMargin=2*cm, bottomMargin=2*cm,
+                                leftMargin=2*cm, rightMargin=2*cm)
+        styles = getSampleStyleSheet()
+        style_h = ParagraphStyle('Header', parent=styles['Heading1'], textColor=HexColor('#E30613'), spaceAfter=6)
+        style_sub = ParagraphStyle('Sub', parent=styles['Normal'], textColor=colors.grey, spaceAfter=20)
+        style_normal = ParagraphStyle('Normal', parent=styles['Normal'], fontSize=10)
+        style_amount = ParagraphStyle('Amount', parent=styles['Heading1'], fontSize=28, textColor=HexColor('#E30613'), alignment=1, spaceBefore=12, spaceAfter=12)
+
+        elements = []
+        elements.append(Paragraph('ENDE Platform', style_h))
+        elements.append(Paragraph('Relatório de Dívida', style_sub))
+        elements.append(HRFlowable(width="100%", thickness=2, color=HexColor('#E30613')))
+        elements.append(Spacer(1, 0.5*cm))
+
+        data = [
+            ['Cliente', customer.user.get_full_name() or customer.user.username],
+            ['Nº do Medidor', customer.meter_number],
+            ['Data', date.today().strftime('%d/%m/%Y')],
+        ]
+        table = Table(data, colWidths=[5*cm, 10*cm])
+        table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ]))
+        elements.append(table)
+        elements.append(Spacer(1, 0.5*cm))
+
+        if invoices:
+            inv_data = [['Fatura', 'Valor', 'Pago', 'Restante', 'Vencimento']]
+            for inv in invoices:
+                remaining = float(inv.amount - (inv.paid_amount or 0))
+                due = inv.due_date.strftime('%d/%m/%Y') if inv.due_date else '-'
+                inv_data.append([
+                    inv.invoice_number, f'{inv.amount:.2f} Kz',
+                    f'{inv.paid_amount or 0:.2f} Kz', f'{remaining:.2f} Kz', due
+                ])
+            inv_table = Table(inv_data, colWidths=[3.5*cm, 3*cm, 3*cm, 3*cm, 3*cm])
+            inv_table.setStyle(TableStyle([
+                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+                ('FONTSIZE', (0, 0), (-1, -1), 9),
+                ('BACKGROUND', (0, 0), (-1, 0), HexColor('#E30613')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+                ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
+                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                ('TOPPADDING', (0, 0), (-1, -1), 4),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+            ]))
+            elements.append(inv_table)
+        else:
+            elements.append(Paragraph('Nenhuma fatura pendente.', style_normal))
+
+        elements.append(Spacer(1, 1*cm))
+        elements.append(HRFlowable(width="100%", thickness=1, color=colors.grey))
+        elements.append(Spacer(1, 0.3*cm))
+        elements.append(Paragraph('Total da Dívida', style_normal))
+        elements.append(Paragraph(f'{total_debt:.2f} Kz', style_amount))
+        elements.append(Spacer(1, 1.5*cm))
+        elements.append(HRFlowable(width="100%", thickness=0.5, color=colors.lightgrey))
+        elements.append(Paragraph('ENDE Platform - Angola', ParagraphStyle('Footer', parent=styles['Normal'], fontSize=8, textColor=colors.grey, alignment=1, spaceBefore=6)))
+
+        doc.build(elements)
+        buffer.seek(0)
+        return buffer
+
+    @staticmethod
     def generate_pdf(invoice, template_name=None, context=None):
         return InvoiceGenerator.generate_payment_receipt(invoice)
 

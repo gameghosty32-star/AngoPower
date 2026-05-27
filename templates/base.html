@@ -50,6 +50,21 @@
                                 {% endif %}
                             </a>
                         </li>
+                        {% if user.user_type == 'admin' or user.user_type == 'operator' %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-grid"></i> Gestão
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                {% if user.user_type == 'admin' %}
+                                <li><a class="dropdown-item" href="{% url 'dashboard:admin' %}"><i class="bi bi-speedometer2"></i> Dashboard Admin</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'dashboard:agent' %}"><i class="bi bi-headset"></i> Painel do Agente</a></li>
+                                <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear"></i> Admin Django</a></li>
+                                <li><a class="dropdown-item" href="{% url 'postpaid:admin_approve' %}"><i class="bi bi-file-check"></i> Aprovar Contratos</a></li>
+                            </ul>
+                        </li>
+                        {% endif %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle"></i> {{ user.username }}

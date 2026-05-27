@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Administrativo{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="page-title mb-0"><i class="bi bi-speedometer2 me-2"></i>Dashboard Administrativo</h4>
+    <a href="{% url 'admin:index' %}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-gear"></i> Admin Django
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-people"></i></div>
+            <div class="value">{{ total_customers }}</div>
+            <div class="label">Total de Clientes</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-lightning-charge"></i></div>
+            <div class="value">{{ prepaid_count }}</div>
+            <div class="label">Pré-pagos</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-file-text"></i></div>
+            <div class="value">{{ postpaid_count }}</div>
+            <div class="label">Pós-pagos</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-cash-coin"></i></div>
+            <div class="value">{{ total_revenue|floatformat:0 }}Kz</div>
+            <div class="label">Receita Total</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-ticket"></i></div>
+            <div class="value">{{ open_tickets }}</div>
+            <div class="label">Tickets Abertos</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-file-earmark-text"></i></div>
+            <div class="value">{{ total_invoices }}</div>
+            <div class="label">Total Faturas</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="icon"><i class="bi bi-clock"></i></div>
+            <div class="value">{{ pending_contracts }}</div>
+            <div class="label">Contratos Pendentes</div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header"><i class="bi bi-clock-history me-2"></i>Transacções Recentes</div>
+    <div class="card-body p-0">
+        {% if recent_transactions %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Valor</th>
+                            <th>Tipo</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for txn in recent_transactions %}
+                        <tr>
+                            <td><code>{{ txn.transaction_id|truncatechars:12 }}</code></td>
+                            <td>{{ txn.customer.user.username }}</td>
+                            <td class="fw-bold">{{ txn.amount|floatformat:2 }}Kz</td>
+                            <td><span class="badge bg-info">{{ txn.get_transaction_type_display }}</span></td>
+                            <td class="text-muted">{{ txn.created_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-4 text-muted">
+                <i class="bi bi-inbox" style="font-size:2rem"></i>
+                <p class="mt-2 mb-0">Nenhuma transacção recente.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

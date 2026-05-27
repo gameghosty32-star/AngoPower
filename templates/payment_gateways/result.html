@@ -22,6 +22,11 @@
                     <p><strong>Mensagem:</strong> {{ response.message }}</p>
                 </div>
                 <div class="d-grid gap-2 mt-4">
+                    {% if success %}
+                        <a href="{% url 'payment_gateways:download_receipt' transaction.transaction_id %}" class="btn btn-success">
+                            <i class="bi bi-download"></i> Baixar Recibo (PDF)
+                        </a>
+                    {% endif %}
                     <a href="{% url 'customers:dashboard' %}" class="btn btn-primary">
                         <i class="bi bi-speedometer2"></i> Voltar ao Dashboard
                     </a>
